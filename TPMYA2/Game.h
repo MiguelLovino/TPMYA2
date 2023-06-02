@@ -4,6 +4,9 @@
 #include <Box2D/Box2D.h>
 #include "Avatar.h"
 #include <string> 
+#include "Ragdol.h"
+#include "Cannon.h"
+#include "cannon_Sprite.h"
 #include <iostream>
 
 using namespace sf;
@@ -16,35 +19,34 @@ private:
 	void UpdateGame();
 	void ProcessCollisions();
 
+	Texture* text_cannon;
+	Sprite* spr_fondo;
+	Texture* tex_fondo;
+
 	View* camara1;
 	b2World* mundo;
+	float gravedad = 9.8f;
 
+	// 
 	//piso
+	RectangleShape* piso[4];
+	b2Vec2 piso_posicion[4];
 
-	//*****************///
-	RectangleShape* fig_puente[5];
-	b2Body* bod_puente[5];
-	b2BodyDef def_puente[5];
-	b2Fixture* fix_puente[5]; //todos iguales, uso el mismo fixture
-	b2FixtureDef fix_def_puente[5];
+	b2Body* bod_piso[4];
+	b2BodyDef boddef_piso[4]; //no puede ser puntero
+	b2Fixture* fix_piso[4];
+	b2FixtureDef fixdef_piso[4]; //no puede ser puntero
 
-	//resortes del puente
-	
-	b2DistanceJoint* joint_puente[4];
-	b2DistanceJointDef def_joint_puente[4];
+	//plataformas movibles.
+	RectangleShape* mov_plat[4];
+	b2Vec2 mov_plat_posicion[4];
 
-
-	//********************//
-
+	b2Body* bod_mov_plat[4];
+	b2BodyDef boddef_mov_plat[4];
+	b2Fixture* fix_mov_plat[4];
+	b2FixtureDef fixdef_mov_plat[4];
 
 
-	RectangleShape* piso;
-	b2Vec2 piso_posicion;
-
-	b2Body* bod_piso;
-	b2BodyDef boddef_piso; //no puede ser puntero
-	b2Fixture* fix_piso;
-	b2FixtureDef fixdef_piso; //no puede ser puntero
 
 	//ragdoll
 
@@ -59,7 +61,8 @@ private:
 
 	//avatares
 	Avatar* Ragdolino[6];
-	Avatar* pisolino;
+	Avatar* pisolino[4];
+	Avatar* Plataforma_mov[4];
 	//**************//
 	Avatar* puente_blando[5];
 	//**************//
@@ -67,6 +70,29 @@ private:
 	// Resortes del ragdoll
 	b2DistanceJoint* joint_ragdolino[5];
 	b2DistanceJointDef joint_def_ragdolino[5];
+
+	//clase ragdoll
+	Ragdol* gallardo;
+	Ragdol* arr_gallardo[10];
+	int cant_arr_gallardo = 0;
+
+	//clase cannon
+	Cannon* cannon_ragdoll;
+	//clase cannon sprite
+
+	cannon_Sprite* cannon2;
+
+	//mouse coord to world
+	Vector2i pixel_pos;
+	Vector2f world_pos;
+
+	Clock* reloj;
+	float tiempo1 = 0;
+	float tiempo2 = 0;
+
+	//fuerza del cannon
+	float potencia_cannon = 0;
+
 public: Game(int alto, int ancho, string titulo);
 	  ~Game(void);
 	  void Go();
@@ -76,7 +102,7 @@ public: Game(int alto, int ancho, string titulo);
 	  void actualizar_fisica();
 	  float grados_a_radiannes(float grados);
 	  float radianes_a_grados(float radianes);
-
+	  void movimiento_plataformas();
 	  //TODO 
 	  //a este proyecto queda empeza a realizar las clases.
 };
