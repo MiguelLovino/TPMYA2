@@ -29,7 +29,7 @@ Cannon::Cannon(b2World* mundo)
 	cannolino->set_texture(text_cannon);
 	
 	//cambio el centro de la masa
-	//cout << bod_cannon->GetMass() << endl;
+	
 
 }
 

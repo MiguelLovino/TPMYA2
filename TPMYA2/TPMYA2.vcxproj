@@ -131,18 +131,26 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Avatar.h" />
+    <ClInclude Include="Caja.h" />
     <ClInclude Include="Cannon.h" />
     <ClInclude Include="cannon_Sprite.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Pared_estatica.h" />
+    <ClInclude Include="Plataforma_movible.h" />
     <ClInclude Include="Ragdol.h" />
+    <ClInclude Include="ZonaGanar.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Avatar.cpp" />
+    <ClCompile Include="Caja.cpp" />
     <ClCompile Include="Cannon.cpp" />
     <ClCompile Include="cannon_Sprite.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Pared_estatica.cpp" />
+    <ClCompile Include="Plataforma_movible.cpp" />
     <ClCompile Include="Ragdol.cpp" />
+    <ClCompile Include="ZonaGanar.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

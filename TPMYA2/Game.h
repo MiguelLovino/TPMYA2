@@ -8,6 +8,10 @@
 #include "Cannon.h"
 #include "cannon_Sprite.h"
 #include <iostream>
+#include "Plataforma_movible.h"
+#include "Pared_estatica.h"
+#include "Caja.h"
+#include "ZonaGanar.h"
 
 using namespace sf;
 using namespace std;
@@ -19,6 +23,8 @@ private:
 	void UpdateGame();
 	void ProcessCollisions();
 
+	Texture* tex_piso;
+	Texture* tex_pared;
 	Texture* text_cannon;
 	Sprite* spr_fondo;
 	Texture* tex_fondo;
@@ -37,50 +43,21 @@ private:
 	b2Fixture* fix_piso[4];
 	b2FixtureDef fixdef_piso[4]; //no puede ser puntero
 
-	//plataformas movibles.
-	RectangleShape* mov_plat[4];
-	b2Vec2 mov_plat_posicion[4];
-
-	b2Body* bod_mov_plat[4];
-	b2BodyDef boddef_mov_plat[4];
-	b2Fixture* fix_mov_plat[4];
-	b2FixtureDef fixdef_mov_plat[4];
-
-
-
-	//ragdoll
-
-	b2Body* bod_ragdol[6];
-	b2BodyDef boddef_ragdol[6];
-	b2Fixture* fix_ragdol[6];
-	b2FixtureDef fixdef_ragdol[6];
-
-	RectangleShape* fig_ragdol[6];
+	Avatar* pisolino[4];
 
 	float fps, tiempoFrame;
 
-	//avatares
-	Avatar* Ragdolino[6];
-	Avatar* pisolino[4];
-	Avatar* Plataforma_mov[4];
-	//**************//
-	Avatar* puente_blando[5];
-	//**************//
-	
-	// Resortes del ragdoll
-	b2DistanceJoint* joint_ragdolino[5];
-	b2DistanceJointDef joint_def_ragdolino[5];
-
 	//clase ragdoll
-	Ragdol* gallardo;
 	Ragdol* arr_gallardo[10];
 	int cant_arr_gallardo = 0;
 
 	//clase cannon
 	Cannon* cannon_ragdoll;
 	//clase cannon sprite
-
 	cannon_Sprite* cannon2;
+
+	//clase plataformas movibles verticales
+	Plataforma_movible* mov_p_forma[3];
 
 	//mouse coord to world
 	Vector2i pixel_pos;
@@ -92,6 +69,15 @@ private:
 
 	//fuerza del cannon
 	float potencia_cannon = 0;
+
+	//paredes estaticas
+	Pared_estatica* libro[4];
+
+	//cajas dinamicas
+	Caja* cajas[4];
+
+	//zona de ganar
+	ZonaGanar* metaA;
 
 public: Game(int alto, int ancho, string titulo);
 	  ~Game(void);

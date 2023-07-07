@@ -11,6 +11,8 @@ class cannon_Sprite
 private:
 	Sprite* spr_canon;
 	Texture* tex_canon;
+	Sprite* spr_rueda;
+	Texture* tex_rueda;
 	RectangleShape origenpoint;
 
 public:

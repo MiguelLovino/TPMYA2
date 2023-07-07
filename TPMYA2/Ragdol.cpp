@@ -9,7 +9,9 @@ Ragdol::Ragdol(b2World* mundo, b2Vec2 m, float rot_cannon)
 	}
 
 	fig_ragdol[0]->setFillColor(Color::White);
+	
 	fig_ragdol[1]->setFillColor(Color::Color(15, 50, 59));
+
 	fig_ragdol[2]->setFillColor(Color::Yellow);
 	fig_ragdol[3]->setFillColor(Color::Green);
 	fig_ragdol[4]->setFillColor(Color::Color(170, 50, 59));
@@ -83,7 +85,6 @@ Ragdol::Ragdol(b2World* mundo, b2Vec2 m, float rot_cannon)
 		Ragdolino[i] = new Avatar(bod_ragdol[i], fig_ragdol[i]);
 		bod_ragdol[i]->SetTransform({ bod_ragdol[i]->GetPosition()}, rot_cannon);
 	}
-
 }
 
 Ragdol::~Ragdol()
