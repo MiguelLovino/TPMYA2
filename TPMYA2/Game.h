@@ -20,9 +20,17 @@ private:
 	RenderWindow* pWnd;
 	void ProcessEvent(Event& evt);
 	void DrawGame();
+	void Nivel_inicial_dibujar();
+	void Nivel_1_dibujar();
+	void Nivel_2_dibujar();
 	void UpdateGame();
+	void Nivel_inicial_actualizar();
+	void Nivel_1_actualizar();
+	void Nivel_2_actualizar();
 	void ProcessCollisions();
-
+	void Nivel_inicial_colisiones();
+	void Nivel_1_colisiones();
+	void Nivel_2_colisiones();
 	Texture* tex_piso;
 	Texture* tex_pared;
 	Texture* text_cannon;
@@ -79,7 +87,21 @@ private:
 	//zona de ganar
 	ZonaGanar* metaA;
 
-public: Game(int alto, int ancho, string titulo);
+	//Bandera de Niveles.
+	bool Nivel_inicio = true;
+	bool Nivel_1 = false;
+	bool Nivel_2 = false;
+
+	Font *font_menu;
+	Text* jugar;
+	Text* Salir;
+	Sprite* spr_mira;
+	Texture* txt_mira;
+
+	int ventana_ancho;
+	int ventana_alto;
+
+public: Game(int ancho, int alto, string titulo);
 	  ~Game(void);
 	  void Go();
 	  void cargar_imagenes();
@@ -88,7 +110,6 @@ public: Game(int alto, int ancho, string titulo);
 	  void actualizar_fisica();
 	  float grados_a_radiannes(float grados);
 	  float radianes_a_grados(float radianes);
-	  void movimiento_plataformas();
-	  //TODO 
-	  //a este proyecto queda empeza a realizar las clases.
+	  void inicializar_objetos();
+	  
 };

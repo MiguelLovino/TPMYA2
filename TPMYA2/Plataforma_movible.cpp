@@ -45,7 +45,7 @@ void Plataforma_movible::actualizar(float x1, float x2)
 {
 	Plataforma_mov->actualizar_ragdol();	
 	mover(x1,x2);
-	cout << bod_mov_plat->GetPosition().y << endl;
+	
 }
 
 void Plataforma_movible::colicion(RectangleShape *rect[])
