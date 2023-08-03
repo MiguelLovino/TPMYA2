@@ -23,5 +23,7 @@ public:
 	Caja(String textura, b2World* mundo, b2Vec2 pos, Vector2f tam, View* camara1);
 	void Dibujar(RenderWindow* ventana);
 	void Actualizar();
+	RectangleShape get_rect() { return *rec_caja; }
+	bool enPosicion = false;
 };
 

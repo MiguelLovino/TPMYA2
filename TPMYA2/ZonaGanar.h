@@ -16,6 +16,6 @@ public:
 	ZonaGanar(String url, Vector2f pos);
 	~ZonaGanar();
 	void Dibujar(RenderWindow *ventana);
-
+	Sprite get_spr() { return *spr_zona; }
 };
 

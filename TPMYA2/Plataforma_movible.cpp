@@ -50,6 +50,7 @@ void Plataforma_movible::actualizar(float x1, float x2)
 
 void Plataforma_movible::colicion(RectangleShape *rect[])
 {
+	//cambia de sentido al colicionar contra los bordes de la pantalla.
 	if (mov_plat->getGlobalBounds().intersects(rect[1]->getGlobalBounds()))
 	{
 		vel = -vel;

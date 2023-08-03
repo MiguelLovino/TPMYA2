@@ -100,6 +100,7 @@ private:
 
 	int ventana_ancho;
 	int ventana_alto;
+	int puntajeNivel1 = 0;
 
 public: Game(int ancho, int alto, string titulo);
 	  ~Game(void);

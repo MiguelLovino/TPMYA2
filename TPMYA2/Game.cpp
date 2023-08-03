@@ -75,6 +75,32 @@ void Game::Nivel_1_actualizar()
 	{
 		cajas[i]->Actualizar();
 	}
+	
+	//consulto si alguna de las cajas se encuentran en la meta.
+	for (int i = 0; i < 4; i++)
+	{
+		int c_pos_X = cajas[i]->get_rect().getPosition().x;
+		int c_pos_Y = cajas[i]->get_rect().getPosition().y;
+
+		if (c_pos_X > 61 && c_pos_X < 65 && c_pos_Y > 93 && c_pos_Y < 106)
+		{
+			if (cajas[i]->enPosicion == false)
+			{
+				//activo una bandera para saber que esta en el lugar correcto
+				cajas[i]->enPosicion = true;
+				//sumo un punto a la condicion de pasar de nivel
+				puntajeNivel1++;
+			}
+		}
+
+	}
+	cout << puntajeNivel1 << endl;
+
+	if (puntajeNivel1 == 3)
+	{
+		Nivel_1 = false;
+		Nivel_2 = true;
+	}
 }
 
 void Game::Nivel_2_actualizar()
@@ -172,14 +198,30 @@ void Game::Nivel_inicial_colisiones()
 	if (Nivel_inicio)
 	{
 		//si hago click en jugar, avanzo a nivel 1, si hago click en salir, salgo del huego
-		if (spr_mira->getGlobalBounds().intersects(jugar->getGlobalBounds()) && Mouse::isButtonPressed(Mouse::Left))
+		if (spr_mira->getGlobalBounds().intersects(jugar->getGlobalBounds()))
 		{
-			Nivel_inicio = false;
-			Nivel_1 = true;
+			jugar->setOutlineThickness(5);
+			if (Mouse::isButtonPressed(Mouse::Left))
+			{
+				Nivel_inicio = false;
+				Nivel_1 = true;
+			}
 		}
-		if (spr_mira->getGlobalBounds().intersects(Salir->getGlobalBounds()) && Mouse::isButtonPressed(Mouse::Left))
+		else
 		{
-			pWnd->close();
+			jugar->setOutlineThickness(0);
+		}
+		if (spr_mira->getGlobalBounds().intersects(Salir->getGlobalBounds()))
+		{
+			Salir->setOutlineThickness(5);
+			if (Mouse::isButtonPressed(Mouse::Left))
+			{
+				pWnd->close();
+			}
+		}
+		else
+		{
+			Salir->setOutlineThickness(0);
 		}
 	}
 }
@@ -327,16 +369,19 @@ void Game::ProcessEvent(Event& evt)
 				}
 			}
 		}
-
-		if (Mouse::isButtonPressed(Mouse::Right))
+		if (Nivel_1 || Nivel_2)
 		{
-			//mundo->DestroyBody(bod_piso);
-			for (int i = 0; i < 10; i++)
+			if (Mouse::isButtonPressed(Mouse::Right))
 			{
-				if (arr_gallardo[i] != NULL)
+				//destruyo todos los ragdols y reseteo el array para volver a disparar
+			
+				for (int i = 0; i < 10; i++)
 				{
-					arr_gallardo[i]->sacar_cabeza(); //cambiar nombre
-					arr_gallardo[i] = NULL;
+					if (arr_gallardo[i] != NULL)
+					{
+						arr_gallardo[i]->sacar_cabeza(); //cambiar nombre
+						arr_gallardo[i] = NULL;
+					}
 				}
 			}
 		}
@@ -355,6 +400,12 @@ void Game::ProcessEvent(Event& evt)
 			if (evt.key.code == Keyboard::Escape)
 			{
 				pWnd->close();
+			}
+
+			if (evt.key.code == Keyboard::P)
+			{
+				Nivel_1 = false;
+				Nivel_2 = true;
 			}
 			break;
 	}
@@ -431,6 +482,7 @@ void Game::inicializar_objetos()
 	jugar->setCharacterSize(45);
 	jugar->setFillColor(Color::Red);
 	jugar->setString("Jugar");
+	jugar->setOutlineColor(Color::White);
 
 	Salir = new Text;
 	Salir->setFont(*font_menu);
@@ -438,7 +490,8 @@ void Game::inicializar_objetos()
 	Salir->setFillColor(Color::Red);
 	Salir->setString("Salir");
 	Salir->setPosition(5, 10);
-	
+	Salir->setOutlineColor(Color::White);
+
 	//transformo las cordenadas 
 	Vector2f jugar_pos = pWnd->mapPixelToCoords({ 300, 200 });
 	jugar->setPosition(jugar_pos.x, jugar_pos.y);
