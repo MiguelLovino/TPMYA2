@@ -36,9 +36,20 @@ Plataforma_movible::Plataforma_movible(b2World *mundo, float velo, b2Vec2 pos)
 
 }
 
+void Plataforma_movible::destruir_plataforma()
+{
+	if (bod_mov_plat != NULL) {
+
+	bod_mov_plat->GetWorld()->DestroyBody(bod_mov_plat);
+	bod_mov_plat = NULL;
+	}
+}
+
 void Plataforma_movible::dibujar(RenderWindow* ventana)
 {
-	Plataforma_mov->dibujar_ragdol(*ventana);
+	
+		Plataforma_mov->dibujar_ragdol(*ventana);
+	
 }
 
 void Plataforma_movible::actualizar(float x1, float x2)

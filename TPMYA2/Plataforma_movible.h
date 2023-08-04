@@ -26,11 +26,13 @@ private:
 
 public:
 	Plataforma_movible(b2World* mundo, float velo, b2Vec2 pos);
+	void destruir_plataforma();
 	void dibujar(RenderWindow* ventana);
 	void actualizar(float x1, float x2);
 	void colicion(RectangleShape* rect[]);
 	b2Vec2 get_pos() { return  bod_mov_plat->GetPosition(); }
 	void mover(float x1, float x2);
-	void set_pos_y(float posy) { bod_mov_plat->SetTransform({ bod_mov_plat->GetPosition().x, posy }, 0); }
+	void set_pos_y(float posy) { bod_mov_plat->SetTransform({ bod_mov_plat->GetPosition().x, posy }, 0);
+	}
 };
 

@@ -67,9 +67,10 @@ void Game::Nivel_1_actualizar()
 		pisolino[i]->actualizar_ragdol();
 	}
 
-	mov_p_forma[0]->actualizar(102, 80);
-	mov_p_forma[1]->actualizar(95, 80);
-	mov_p_forma[2]->actualizar(100, 80);
+	//mejorar
+	if(mov_p_forma[0] != NULL) mov_p_forma[0]->actualizar(102, 80);
+	if (mov_p_forma[1] != NULL) mov_p_forma[1]->actualizar(95, 80);
+	if (mov_p_forma[2] != NULL) mov_p_forma[2]->actualizar(100, 80);
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -95,16 +96,32 @@ void Game::Nivel_1_actualizar()
 
 	}
 	cout << puntajeNivel1 << endl;
-
+	//si almenos 3 cajas se encuentran en la zona de meta, se pasa de pantalla
 	if (puntajeNivel1 == 3)
-	{
+	{	
+		//activo y desactivo las banderas correspondientes.
 		Nivel_1 = false;
 		Nivel_2 = true;
+		//debo de eliminar los siguentes objetos, o reposicionarlos.
+		//los pisos(eliminados), las cajas, las cadenasEstaticasMovibles, la bandera.
+
+		//metodo destruir.
 	}
 }
 
 void Game::Nivel_2_actualizar()
 {
+	if (Nivel_2)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			if (mov_p_forma[i] != NULL)
+			{
+				mov_p_forma[i]->destruir_plataforma();
+				mov_p_forma[i] = NULL;
+			}
+		}
+	}
 }
 
 void Game::DrawGame()
@@ -140,7 +157,8 @@ void Game::Nivel_1_dibujar()
 		//plataformas movibles
 		for (int i = 0; i < 3; i++)
 		{
-			mov_p_forma[i]->dibujar(pWnd);
+			
+			if (mov_p_forma[i] != NULL) mov_p_forma[i]->dibujar(pWnd);
 		}
 
 		//ragdols
@@ -182,7 +200,22 @@ void Game::Nivel_2_dibujar()
 	/*********** Nivel 2 **********/
 	if (Nivel_2)
 	{
+		pWnd->draw(*spr_fondo);
 
+		for(int i = 0; i < 4; i++) pWnd->draw(*piso[i]);
+
+		//ragdols
+		for (int i = 0; i < 10; i++)
+		{
+			if (arr_gallardo[i] != NULL)
+			{
+				//dibujo los cuerpos de los ragdols
+				arr_gallardo[i]->dibujar_ragdol(pWnd);
+			}
+		}
+
+		//canon
+		cannon2->dibujar(pWnd);
 	}
 }
 
@@ -233,7 +266,7 @@ void Game::Nivel_1_colisiones()
 		//controlo la colicion de las plataformas en movimiento con el piso
 		for (int i = 0; i < 3; i++)
 		{
-			mov_p_forma[i]->colicion(piso);
+			if (mov_p_forma[i] != NULL) mov_p_forma[i]->colicion(piso);
 		}
 	}
 }
@@ -252,8 +285,8 @@ void Game::cargar_imagenes()
 	tex_piso->loadFromFile("recursos/pared2.png");
 	tex_pared = new Texture;
 	tex_pared->loadFromFile("recursos/pared3.png");
-	//imagen del piso
 	
+	//imagen del piso
 		piso[0] = new RectangleShape;
 		piso[0]->setTexture(tex_piso);
 		piso[1] = new RectangleShape;
