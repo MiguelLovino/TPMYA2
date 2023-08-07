@@ -50,3 +50,10 @@ void Caja::Actualizar()
 {
 	caja_dinamica->actualizar_ragdol();
 }
+
+void Caja::Destruir(b2World* mundo)
+{
+	mundo->DestroyBody(bod_caja);
+}
+
+

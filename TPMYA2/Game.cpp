@@ -36,6 +36,8 @@ void Game::UpdateGame() //actualizo los objetos
 
 	//actualizo el tiempo
 	tiempo1 = reloj->getElapsedTime().asSeconds();
+	//actualizo el cargador.
+	actualizar_cargador_ragdoll();
 
 	Nivel_inicial_actualizar();
 	Nivel_1_actualizar();
@@ -43,11 +45,65 @@ void Game::UpdateGame() //actualizo los objetos
 
 }
 
+void Game::Nivel_inicial_colisiones()
+{
+	if (Nivel_inicio)
+	{
+		//si hago click en jugar, avanzo a nivel 1, si hago click en salir, salgo del huego
+		if (spr_mira->getGlobalBounds().intersects(jugar->getGlobalBounds()))
+		{
+			jugar->setOutlineThickness(5);
+			if (Mouse::isButtonPressed(Mouse::Left))
+			{
+				Nivel_inicio = false;
+				Nivel_1 = true;
+			}
+		}
+		else
+		{
+			jugar->setOutlineThickness(0);
+		}
+		if (spr_mira->getGlobalBounds().intersects(Salir->getGlobalBounds()))
+		{
+			Salir->setOutlineThickness(5);
+			if (Mouse::isButtonPressed(Mouse::Left))
+			{
+				pWnd->close();
+			}
+		}
+		else
+		{
+			Salir->setOutlineThickness(0);
+		}
+	}
+}
 void Game::Nivel_inicial_actualizar()
 {
 
 }
+void Game::Nivel_inicial_dibujar()
+{
+	/*********** Nivel inicio **********/
+	if (Nivel_inicio)
+	{
+		pWnd->draw(*spr_fondo);
+		pWnd->draw(*jugar);
+		pWnd->draw(*Salir);
+		pWnd->draw(*spr_mira);
+	}
+}
 
+void Game::Nivel_1_colisiones()
+{
+	if (Nivel_1)
+	{
+		//controlo la colicion de las plataformas en movimiento con el piso
+		for (int i = 0; i < 3; i++)
+		{
+			if (mov_p_forma[i] != NULL) mov_p_forma[i]->colicion(piso);
+		}
+	}
+}
 void Game::Nivel_1_actualizar()
 {
 
@@ -74,12 +130,18 @@ void Game::Nivel_1_actualizar()
 
 	for (int i = 0; i < 4; i++)
 	{
-		cajas[i]->Actualizar();
+		if (cajas[i] != NULL)
+		{
+		  cajas[i]->Actualizar();
+		}
 	}
 	
 	//consulto si alguna de las cajas se encuentran en la meta.
 	for (int i = 0; i < 4; i++)
 	{
+		if (cajas[i] != NULL)
+		{
+
 		int c_pos_X = cajas[i]->get_rect().getPosition().x;
 		int c_pos_Y = cajas[i]->get_rect().getPosition().y;
 
@@ -91,11 +153,13 @@ void Game::Nivel_1_actualizar()
 				cajas[i]->enPosicion = true;
 				//sumo un punto a la condicion de pasar de nivel
 				puntajeNivel1++;
+			    tx_objetivo->setString("Cajas en zona: " + to_string(puntajeNivel1));
 			}
 		}
 
+		}
 	}
-	cout << puntajeNivel1 << endl;
+	cout <<"mi puntaje es" << puntajeNivel1 << endl;
 	//si almenos 3 cajas se encuentran en la zona de meta, se pasa de pantalla
 	if (puntajeNivel1 == 3)
 	{	
@@ -106,43 +170,20 @@ void Game::Nivel_1_actualizar()
 		//los pisos(eliminados), las cajas, las cadenasEstaticasMovibles, la bandera.
 
 		//metodo destruir.
-	}
-}
-
-void Game::Nivel_2_actualizar()
-{
-	if (Nivel_2)
-	{
-		for (int i = 0; i < 3; i++)
+		
+		//destruyo todos los ragdols y reseteo el array para volver a disparar
+		for (int i = 0; i < 10; i++)
 		{
-			if (mov_p_forma[i] != NULL)
+			if (arr_gallardo[i] != NULL)
 			{
-				mov_p_forma[i]->destruir_plataforma();
-				mov_p_forma[i] = NULL;
+				arr_gallardo[i]->sacar_cabeza(); //cambiar nombre
+				arr_gallardo[i] = NULL;
 			}
 		}
+		//reseteo el cargador de ragdolls
+		contador_ragdoll = 10;
 	}
 }
-
-void Game::DrawGame()
-{
-	Nivel_inicial_dibujar();
-	Nivel_1_dibujar();
-	Nivel_2_dibujar();		
-}
-
-void Game::Nivel_inicial_dibujar()
-{
-	/*********** Nivel inicio **********/
-	if (Nivel_inicio)
-	{
-		pWnd->draw(*spr_fondo);
-		pWnd->draw(*jugar);
-		pWnd->draw(*Salir);
-		pWnd->draw(*spr_mira);
-	}
-}
-
 void Game::Nivel_1_dibujar()
 {
 	/*********** Nivel 1 **********/
@@ -183,24 +224,83 @@ void Game::Nivel_1_dibujar()
 		//libros
 		for (int i = 0; i < 4; i++)
 		{
-			libro[i]->Dibujar(pWnd);
+			plataforma_estatica[i]->Dibujar(pWnd);
 		}
 
 		//cajas
 		for (int i = 0; i < 4; i++)
 		{
-			cajas[i]->Dibujar(pWnd);
+			if (cajas[i] != NULL)
+			{
+				cajas[i]->Dibujar(pWnd);
+			}
 		}
+		//cargador
+		pWnd->draw(*tx_cargador);
+		//objetivo
+		pWnd->draw(*tx_objetivo);
+
 	}
+
+	
+
 	pWnd->draw(*spr_mira);
 }
 
+void Game::Nivel_2_colisiones()
+{
+	if (Nivel_2)
+	{
+
+	}
+}
+void Game::Nivel_2_actualizar()
+{
+	if (Nivel_2)
+	{
+		//nota: agregar todas las detrucciones a un metodo DESTRUIRNIVEL1
+		
+		//destruir platafomas del nivel 1.
+
+		for (int i = 0; i < 3; i++)
+		{
+			if (mov_p_forma[i] != NULL)
+			{
+				mov_p_forma[i]->destruir_plataforma();
+				mov_p_forma[i] = NULL;
+			}
+		}
+
+		//destruir piso estaticos del nivel 1
+
+		for (int i = 0; i < 4; i++)
+		{
+			if (plataforma_estatica[i] != NULL)
+			{
+				plataforma_estatica[i]->Destruir(mundo);
+				plataforma_estatica[i] = NULL;
+			}
+		}
+		
+		//destruir cajas o reposicionarlas.
+		for (int i = 0; i < 4; i++)
+		{
+			if (cajas[i] != NULL)
+			{
+				cajas[i]->Destruir(mundo);
+				cajas[i] = NULL;
+			}
+		}
+	}
+}
 void Game::Nivel_2_dibujar()
 {
 	/*********** Nivel 2 **********/
 	if (Nivel_2)
 	{
 		pWnd->draw(*spr_fondo);
+ 
+		pWnd->draw(*spr_mira);
 
 		for(int i = 0; i < 4; i++) pWnd->draw(*piso[i]);
 
@@ -213,10 +313,18 @@ void Game::Nivel_2_dibujar()
 				arr_gallardo[i]->dibujar_ragdol(pWnd);
 			}
 		}
-
+		//dibujar cargador
+		pWnd->draw(*tx_cargador);
 		//canon
 		cannon2->dibujar(pWnd);
 	}
+}
+
+void Game::DrawGame()
+{
+	Nivel_inicial_dibujar();
+	Nivel_1_dibujar();
+	Nivel_2_dibujar();		
 }
 
 void Game::ProcessCollisions()
@@ -224,59 +332,6 @@ void Game::ProcessCollisions()
 	Nivel_inicial_colisiones();
 	Nivel_1_colisiones();
 	Nivel_2_colisiones();
-}
-
-void Game::Nivel_inicial_colisiones()
-{
-	if (Nivel_inicio)
-	{
-		//si hago click en jugar, avanzo a nivel 1, si hago click en salir, salgo del huego
-		if (spr_mira->getGlobalBounds().intersects(jugar->getGlobalBounds()))
-		{
-			jugar->setOutlineThickness(5);
-			if (Mouse::isButtonPressed(Mouse::Left))
-			{
-				Nivel_inicio = false;
-				Nivel_1 = true;
-			}
-		}
-		else
-		{
-			jugar->setOutlineThickness(0);
-		}
-		if (spr_mira->getGlobalBounds().intersects(Salir->getGlobalBounds()))
-		{
-			Salir->setOutlineThickness(5);
-			if (Mouse::isButtonPressed(Mouse::Left))
-			{
-				pWnd->close();
-			}
-		}
-		else
-		{
-			Salir->setOutlineThickness(0);
-		}
-	}
-}
-
-void Game::Nivel_1_colisiones()
-{
-	if (Nivel_1)
-	{
-		//controlo la colicion de las plataformas en movimiento con el piso
-		for (int i = 0; i < 3; i++)
-		{
-			if (mov_p_forma[i] != NULL) mov_p_forma[i]->colicion(piso);
-		}
-	}
-}
-
-void Game::Nivel_2_colisiones()
-{
-	if (Nivel_2)
-	{
-
-	}
 }
 
 void Game::cargar_imagenes()
@@ -375,6 +430,18 @@ void Game::ProcessEvent(Event& evt)
 	{
 		if (Mouse::isButtonPressed(Mouse::Left)) 
 		{
+			// si disparo y tengo el cargador vacio, pierdo
+			if (contador_ragdoll == 0)
+			{
+				cargador_ragdol_vacio = true;
+			}
+			else
+			{
+				cargador_ragdol_vacio = false;
+			}
+
+			if (cargador_ragdol_vacio) cout << "perdiste" << endl;
+
 			for (int i = 0; i < 10; i++)
 			{
 				if (arr_gallardo[i] == NULL)
@@ -397,28 +464,14 @@ void Game::ProcessEvent(Event& evt)
 						arr_gallardo[i]->fuerza_disparo(potencia_cannon * 4, grados_a_radiannes(cannon2->get_sprite().getRotation()));
 					
 						tiempo2 = tiempo1;
+						contador_ragdoll--;
+						tx_cargador->setString("Ragdol restantes: " + to_string(contador_ragdoll));
 						break;
 					}
 				}
 			}
 		}
-		if (Nivel_1 || Nivel_2)
-		{
-			if (Mouse::isButtonPressed(Mouse::Right))
-			{
-				//destruyo todos los ragdols y reseteo el array para volver a disparar
-			
-				for (int i = 0; i < 10; i++)
-				{
-					if (arr_gallardo[i] != NULL)
-					{
-						arr_gallardo[i]->sacar_cabeza(); //cambiar nombre
-						arr_gallardo[i] = NULL;
-					}
-				}
-			}
-		}
-
+		
 	}
 
 	switch (evt.type)
@@ -495,10 +548,10 @@ void Game::inicializar_objetos()
 	mov_p_forma[1] = new Plataforma_movible(mundo, 0.20, { 50, 80 });
 	mov_p_forma[2] = new Plataforma_movible(mundo, 0.22, { 56, 80 });
 	//bordes de pantalla
-	libro[1] = new Pared_estatica("recursos/matlib.jpg", mundo, { 60, 82.59 }, { 3, 1 }, camara1);//arriba
-	libro[2] = new Pared_estatica("recursos/matlib.jpg", mundo, { 52, 98.59 }, { 3, 1 }, camara1);
-	libro[0] = new Pared_estatica("recursos/matlib.jpg", mundo, { 50, 104 }, { 3, 1 }, camara1);
-	libro[3] = new Pared_estatica("recursos/matlib.jpg", mundo, { 59, 104.1 }, { 3, 1 }, camara1);
+	plataforma_estatica[1] = new Pared_estatica("recursos/matlib.jpg", mundo, { 60, 82.59 }, { 3, 1 }, camara1);//arriba
+	plataforma_estatica[2] = new Pared_estatica("recursos/matlib.jpg", mundo, { 52, 98.59 }, { 3, 1 }, camara1);
+	plataforma_estatica[0] = new Pared_estatica("recursos/matlib.jpg", mundo, { 50, 104 }, { 3, 1 }, camara1);
+	plataforma_estatica[3] = new Pared_estatica("recursos/matlib.jpg", mundo, { 59, 104.1 }, { 3, 1 }, camara1);
 	//bajas movibles
 	cajas[0] = new Caja("recursos/caja.jpg", mundo, { 60.5, 82.59 }, { 0.70, 0.75 }, camara1);//arriba
 	cajas[1] = new Caja("recursos/caja.jpg", mundo, { 59.5, 82.59 }, { 0.70, 0.75 }, camara1);//arriba
@@ -525,16 +578,39 @@ void Game::inicializar_objetos()
 	Salir->setPosition(5, 10);
 	Salir->setOutlineColor(Color::White);
 
+	//texto del cargador de ragdols
+	tx_cargador = new Text;
+	tx_cargador->setFont(*font_menu);
+	tx_cargador->setCharacterSize(20);
+	tx_cargador->setFillColor(Color::Black);
+	tx_cargador->setString("Disparos restantes: " + to_string(contador_ragdoll));
+	tx_cargador->setPosition(5, 10);
+	tx_cargador->setOutlineColor(Color::White);
+
+	//texto de objetivo
+	tx_objetivo = new Text;
+	tx_objetivo->setFont(*font_menu);
+	tx_objetivo->setCharacterSize(20);
+	tx_objetivo->setFillColor(Color::Yellow);
+	tx_objetivo->setString("Objetivos en zona: " + to_string(puntajeNivel1));
+	tx_objetivo->setPosition(5, 10);
+	tx_objetivo->setOutlineColor(Color::White);
+
 	//transformo las cordenadas 
-	Vector2f jugar_pos = pWnd->mapPixelToCoords({ 300, 200 });
-	jugar->setPosition(jugar_pos.x, jugar_pos.y);
-	//escalo el texto tomando la camara (lo que estoy viendo) divido el ancho y alto de la ventana.
-	jugar->setScale(camara1->getSize().x / ventana_ancho , camara1->getSize().y / ventana_alto);
+	texto_pos(jugar, 300, 200);
+	texto_pos(Salir, 300, 300);
+	texto_pos(tx_cargador, 10, 575);
+	texto_pos(tx_objetivo, 300, 575);
+}
 
-	Vector2f salir_pos = pWnd->mapPixelToCoords({ 300, 300 });
-	Salir->setPosition(salir_pos.x, salir_pos.y);
-	Salir->setScale(camara1->getSize().x / ventana_ancho, camara1->getSize().y / ventana_alto);
-
+void Game::texto_pos(Text* texto, int x, int y)
+{
+	//traslado la posicion de pixel a cordenada en el mundo de box2d
+	Vector2f posicion = pWnd->mapPixelToCoords({ x,y });
+	//seteo la nueva cordenada en el mundo
+	texto->setPosition(posicion.x, posicion.y);
+	//escalo el texto segun la camara y la ventana
+	texto->setScale(camara1->getSize().x / ventana_ancho, camara1->getSize().y / ventana_alto);
 }
 
 void Game::Go() {
@@ -558,3 +634,13 @@ void Game::Go() {
 Game::~Game()
 {
 }
+
+void Game::actualizar_cargador_ragdoll()
+{
+	if (contador_ragdoll >= 10)
+	{
+		cargador_ragdol_vacio = true;
+	}
+
+}
+

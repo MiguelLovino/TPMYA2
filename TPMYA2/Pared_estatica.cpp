@@ -42,6 +42,7 @@ Pared_estatica::Pared_estatica(String textura, b2World *mundo, b2Vec2 pos, Vecto
 	
 }
 
+
 void Pared_estatica::rotar(float grado)
 {
 	bod_pared->SetTransform({ bod_pared->GetPosition()}, grado);
@@ -50,4 +51,9 @@ void Pared_estatica::rotar(float grado)
 void Pared_estatica::Dibujar(RenderWindow *ventana)
 {
 	pared_fija->dibujar_ragdol(*ventana);
+}
+
+void Pared_estatica::Destruir(b2World *mundo)
+{
+	mundo->DestroyBody(bod_pared);
 }

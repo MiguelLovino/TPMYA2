@@ -79,7 +79,7 @@ private:
 	float potencia_cannon = 0;
 
 	//paredes estaticas
-	Pared_estatica* libro[4];
+	Pared_estatica* plataforma_estatica[4];
 
 	//cajas dinamicas
 	Caja* cajas[4];
@@ -92,6 +92,15 @@ private:
 	bool Nivel_1 = false;
 	bool Nivel_2 = false;
 
+
+	//cargador de ragdolls
+	bool
+		cargador_ragdol_vacio = false;
+	int contador_ragdoll = 10;
+	Text* tx_cargador;
+	//texto objetivo
+	Text* tx_objetivo;
+	//texto del menu
 	Font *font_menu;
 	Text* jugar;
 	Text* Salir;
@@ -104,6 +113,7 @@ private:
 
 public: Game(int ancho, int alto, string titulo);
 	  ~Game(void);
+	  void actualizar_cargador_ragdoll();
 	  void Go();
 	  void cargar_imagenes();
 	  void set_zoom();
@@ -112,5 +122,6 @@ public: Game(int ancho, int alto, string titulo);
 	  float grados_a_radiannes(float grados);
 	  float radianes_a_grados(float radianes);
 	  void inicializar_objetos();
+	  void texto_pos(Text* texto, int x, int y);
 	  
 };

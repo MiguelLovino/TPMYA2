@@ -28,5 +28,6 @@ public:
 	Pared_estatica(String textura,b2World* mundo, b2Vec2 pos, Vector2f tam, View* camara1);
 	void rotar(float grado);
 	void Dibujar(RenderWindow *ventana);
+	void Destruir(b2World* mundo);
 };
 
