@@ -91,12 +91,11 @@ private:
 	bool Nivel_inicio = true;
 	bool Nivel_1 = false;
 	bool Nivel_2 = false;
-
+	bool mousePresionado = false;
 
 	//cargador de ragdolls
-	bool
-		cargador_ragdol_vacio = false;
-	int contador_ragdoll = 10;
+	bool cargador_ragdol_vacio = false;
+	int contador_ragdoll = 1;
 	Text* tx_cargador;
 	//texto objetivo
 	Text* tx_objetivo;
@@ -104,8 +103,13 @@ private:
 	Font *font_menu;
 	Text* jugar;
 	Text* Salir;
+	Text* Reiniciar;
+	Text* Perdiste;
+	Text* Ganaste;
 	Sprite* spr_mira;
 	Texture* txt_mira;
+	Sprite* spr_menu;
+	Texture* txt_menu;
 
 	int ventana_ancho;
 	int ventana_alto;
@@ -123,5 +127,5 @@ public: Game(int ancho, int alto, string titulo);
 	  float radianes_a_grados(float radianes);
 	  void inicializar_objetos();
 	  void texto_pos(Text* texto, int x, int y);
-	  
+	  void inicializarTexto(Text* texto, int size, Color color, Color color2, string str1, int strVariable);
 };

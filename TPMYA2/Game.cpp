@@ -18,6 +18,8 @@ Game::Game(int ancho, int alto, string titulo)
 }
 void Game::UpdateGame() //actualizo los objetos
 {
+	
+
 	//la posicion del mouse en el mundo 
 	pixel_pos = Mouse::getPosition(*pWnd);
 	world_pos = pWnd->mapPixelToCoords(pixel_pos);
@@ -43,32 +45,32 @@ void Game::UpdateGame() //actualizo los objetos
 	Nivel_1_actualizar();
 	Nivel_2_actualizar();
 
+	// si disparo y tengo el cargador vacio, pierdo
+	if (contador_ragdoll == 0)
+	{
+		cargador_ragdol_vacio = true;
+	}
+	else
+	{
+		cargador_ragdol_vacio = false;
+	}
+
+	tx_cargador->setString("Disparos restantes: " + to_string(contador_ragdoll));
+	
 }
 
 void Game::Nivel_inicial_colisiones()
 {
 	if (Nivel_inicio)
 	{
-		//si hago click en jugar, avanzo a nivel 1, si hago click en salir, salgo del huego
-		if (spr_mira->getGlobalBounds().intersects(jugar->getGlobalBounds()))
-		{
-			jugar->setOutlineThickness(5);
-			if (Mouse::isButtonPressed(Mouse::Left))
-			{
-				Nivel_inicio = false;
-				Nivel_1 = true;
-			}
-		}
-		else
-		{
-			jugar->setOutlineThickness(0);
-		}
 		if (spr_mira->getGlobalBounds().intersects(Salir->getGlobalBounds()))
 		{
 			Salir->setOutlineThickness(5);
 			if (Mouse::isButtonPressed(Mouse::Left))
 			{
+				
 				pWnd->close();
+				
 			}
 		}
 		else
@@ -79,7 +81,16 @@ void Game::Nivel_inicial_colisiones()
 }
 void Game::Nivel_inicial_actualizar()
 {
-
+	//actualizo el estadao del cargador
+	if (cargador_ragdol_vacio <= 0)
+	{
+		cargador_ragdol_vacio = true;
+	}
+	else
+	{
+		cargador_ragdol_vacio = false;
+	}
+	tx_objetivo->setString("Cajas en zona: " + to_string(puntajeNivel1));
 }
 void Game::Nivel_inicial_dibujar()
 {
@@ -87,6 +98,7 @@ void Game::Nivel_inicial_dibujar()
 	if (Nivel_inicio)
 	{
 		pWnd->draw(*spr_fondo);
+		pWnd->draw(*spr_menu);
 		pWnd->draw(*jugar);
 		pWnd->draw(*Salir);
 		pWnd->draw(*spr_mira);
@@ -102,10 +114,15 @@ void Game::Nivel_1_colisiones()
 		{
 			if (mov_p_forma[i] != NULL) mov_p_forma[i]->colicion(piso);
 		}
-	}
+
+		}
+	
 }
 void Game::Nivel_1_actualizar()
 {
+	if (Nivel_1)
+	{
+
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -153,13 +170,12 @@ void Game::Nivel_1_actualizar()
 				cajas[i]->enPosicion = true;
 				//sumo un punto a la condicion de pasar de nivel
 				puntajeNivel1++;
-			    tx_objetivo->setString("Cajas en zona: " + to_string(puntajeNivel1));
+			    
 			}
 		}
 
 		}
 	}
-	cout <<"mi puntaje es" << puntajeNivel1 << endl;
 	//si almenos 3 cajas se encuentran en la zona de meta, se pasa de pantalla
 	if (puntajeNivel1 == 3)
 	{	
@@ -170,7 +186,39 @@ void Game::Nivel_1_actualizar()
 		//los pisos(eliminados), las cajas, las cadenasEstaticasMovibles, la bandera.
 
 		//metodo destruir.
+		//destruir platafomas del nivel 1.
+
+		for (int i = 0; i < 3; i++)
+		{
+			if (mov_p_forma[i] != NULL)
+			{
+				mov_p_forma[i]->destruir_plataforma();
+				mov_p_forma[i] = NULL;
+			}
+		}
+
+		//destruir piso estaticos del nivel 1
+
+		for (int i = 0; i < 4; i++)
+		{
+			if (plataforma_estatica[i] != NULL)
+			{
+				plataforma_estatica[i]->Destruir(mundo);
+				plataforma_estatica[i] = NULL;
+			}
+		}
+
+		//destruir cajas
+		for (int i = 0; i < 4; i++)
+		{
+			if (cajas[i] != NULL)
+			{
+				cajas[i]->Destruir(mundo);
+				cajas[i] = NULL;
+			}
+		}
 		
+
 		//destruyo todos los ragdols y reseteo el array para volver a disparar
 		for (int i = 0; i < 10; i++)
 		{
@@ -182,6 +230,7 @@ void Game::Nivel_1_actualizar()
 		}
 		//reseteo el cargador de ragdolls
 		contador_ragdoll = 10;
+	}
 	}
 }
 void Game::Nivel_1_dibujar()
@@ -242,7 +291,13 @@ void Game::Nivel_1_dibujar()
 
 	}
 
-	
+	if (cargador_ragdol_vacio == true)
+	{
+		pWnd->draw(*spr_menu);
+		pWnd->draw(*Reiniciar);
+		pWnd->draw(*Salir);
+		pWnd->draw(*Perdiste);
+	}
 
 	pWnd->draw(*spr_mira);
 }
@@ -259,38 +314,18 @@ void Game::Nivel_2_actualizar()
 	if (Nivel_2)
 	{
 		//nota: agregar todas las detrucciones a un metodo DESTRUIRNIVEL1
-		
-		//destruir platafomas del nivel 1.
-
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 10; i++)
 		{
-			if (mov_p_forma[i] != NULL)
+			//actualizo el arreglo de ragdols
+			if (arr_gallardo[i] != NULL)
 			{
-				mov_p_forma[i]->destruir_plataforma();
-				mov_p_forma[i] = NULL;
-			}
-		}
-
-		//destruir piso estaticos del nivel 1
-
-		for (int i = 0; i < 4; i++)
-		{
-			if (plataforma_estatica[i] != NULL)
-			{
-				plataforma_estatica[i]->Destruir(mundo);
-				plataforma_estatica[i] = NULL;
+				for (int j = 0; j < 6; j++)
+				{
+					arr_gallardo[i]->get_avatar(j).actualizar_ragdol();
+				}
 			}
 		}
 		
-		//destruir cajas o reposicionarlas.
-		for (int i = 0; i < 4; i++)
-		{
-			if (cajas[i] != NULL)
-			{
-				cajas[i]->Destruir(mundo);
-				cajas[i] = NULL;
-			}
-		}
 	}
 }
 void Game::Nivel_2_dibujar()
@@ -322,6 +357,7 @@ void Game::Nivel_2_dibujar()
 
 void Game::DrawGame()
 {
+
 	Nivel_inicial_dibujar();
 	Nivel_1_dibujar();
 	Nivel_2_dibujar();		
@@ -425,23 +461,20 @@ void Game::iniciar_fisica()
 
 void Game::ProcessEvent(Event& evt)
 {
+	//escucho los click del mouse
+	//si hago click izquierdo vuelvo verdadera la variable mousePresionado
+	if (evt.type == Event::MouseButtonPressed && evt.mouseButton.button == Mouse::Left)
+	{
+		mousePresionado = true;
+		cout << "presiono el click izquierdo" << endl;
+	}
+
+
 	// si hago click en el nivel 1 o 2, disparo un ragdol
 	if (Nivel_1 || Nivel_2)
 	{
-		if (Mouse::isButtonPressed(Mouse::Left)) 
+		if (cargador_ragdol_vacio == false && mousePresionado && evt.type == Event::MouseButtonReleased && evt.mouseButton.button == Mouse::Left)
 		{
-			// si disparo y tengo el cargador vacio, pierdo
-			if (contador_ragdoll == 0)
-			{
-				cargador_ragdol_vacio = true;
-			}
-			else
-			{
-				cargador_ragdol_vacio = false;
-			}
-
-			if (cargador_ragdol_vacio) cout << "perdiste" << endl;
-
 			for (int i = 0; i < 10; i++)
 			{
 				if (arr_gallardo[i] == NULL)
@@ -465,7 +498,7 @@ void Game::ProcessEvent(Event& evt)
 					
 						tiempo2 = tiempo1;
 						contador_ragdoll--;
-						tx_cargador->setString("Ragdol restantes: " + to_string(contador_ragdoll));
+						mousePresionado = false;
 						break;
 					}
 				}
@@ -487,15 +520,98 @@ void Game::ProcessEvent(Event& evt)
 			{
 				pWnd->close();
 			}
-
-			if (evt.key.code == Keyboard::P)
-			{
-				Nivel_1 = false;
-				Nivel_2 = true;
-			}
-			break;
 	}
 
+	//si hago click en jugar, avanzo a nivel 1, si hago click en salir, salgo del juego
+	//checkeo la colicion de los sprite
+	if (Nivel_inicio && spr_mira->getGlobalBounds().intersects(jugar->getGlobalBounds()))
+	{
+		//agrego contorno
+		jugar->setOutlineThickness(5);
+
+		//si mousePresionado es verdadero y suelto el boton izquierdo
+		if (mousePresionado && evt.type == Event::MouseButtonReleased && evt.mouseButton.button == Mouse::Left)
+		{
+			//realizo el cambio de pantalla.
+			Nivel_inicio = false;
+			Nivel_1 = true;
+			cout << "suelto jugar" << endl;
+			mousePresionado = false;
+		}
+	}
+	else
+	{
+		//si no colisiono, le saco el contorno
+		jugar->setOutlineThickness(0);
+	}
+	/***********************************reinicio nivel ***************************************/
+	if (cargador_ragdol_vacio == true)
+	{
+		//si hago click en reiniciar, reseteo el nivel, si hago click en salir, salgo del juego
+		if (spr_mira->getGlobalBounds().intersects(Reiniciar->getGlobalBounds()))
+		{
+			Reiniciar->setOutlineThickness(5);
+
+			if (mousePresionado && evt.type == Event::MouseButtonReleased && evt.mouseButton.button == Mouse::Left)
+			{
+				//limpio la escena para volver a empezar
+				//destruir cajas
+				for (int i = 0; i < 4; i++)
+				{
+					if (cajas[i] != NULL)
+					{
+						cajas[i]->Destruir(mundo);
+						cajas[i] = NULL;
+					}
+				}
+				//creo las cajas nuevamente
+				cajas[0] = new Caja("recursos/caja.jpg", mundo, { 60.5, 82.59 }, { 0.70, 0.75 }, camara1);//arriba
+				cajas[1] = new Caja("recursos/caja.jpg", mundo, { 59.5, 82.59 }, { 0.70, 0.75 }, camara1);//arriba
+				cajas[2] = new Caja("recursos/caja.jpg", mundo, { 51.70, 98.59 }, { 0.70, 0.75 }, camara1);
+				cajas[3] = new Caja("recursos/caja.jpg", mundo, { 51, 102 }, { 0.70, 0.75 }, camara1);
+
+				//destruyo todos los ragdols y reseteo el array para volver a disparar
+				for (int i = 0; i < 10; i++)
+				{
+					if (arr_gallardo[i] != NULL)
+					{
+						arr_gallardo[i]->sacar_cabeza(); //cambiar nombre
+						arr_gallardo[i] = NULL;
+					}
+				}
+
+				//reseteo el cargador de ragdolls
+				contador_ragdoll = 10;
+				puntajeNivel1 = 0;
+				mousePresionado = false;
+				cout << " suelto el reset" << endl;
+			}
+		}
+		else
+		{
+			Reiniciar->setOutlineThickness(0);
+		}
+
+		if (spr_mira->getGlobalBounds().intersects(Salir->getGlobalBounds()))
+		{
+			Salir->setOutlineThickness(5);
+			if (Mouse::isButtonPressed(Mouse::Left))
+			{
+				pWnd->close();
+			}
+		}
+		else
+		{
+			Salir->setOutlineThickness(0);
+		}
+	}
+
+
+	if (mousePresionado && evt.type == Event::MouseButtonReleased && evt.mouseButton.button == Mouse::Left)
+	{
+		mousePresionado = false;
+		cout << "suelto el click izquierdo" << endl;
+	}
 }
 
 void Game::set_zoom()
@@ -533,7 +649,12 @@ void Game::inicializar_objetos()
 	spr_mira->setOrigin(spr_mira->getGlobalBounds().width / 2, spr_mira->getGlobalBounds().height / 2);
 	spr_mira->setScale(camara1->getSize().x / ventana_ancho, camara1->getSize().y / ventana_alto);
 
-
+	txt_menu = new Texture;
+	txt_menu->loadFromFile("recursos/papiro2.png");
+	spr_menu = new Sprite(*txt_menu);
+	Vector2f spr_pos = pWnd->mapPixelToCoords({ 10, 120});
+	spr_menu->setPosition(spr_pos.x, spr_pos.y);
+	spr_menu->setScale(camara1->getSize().x / ventana_ancho, camara1->getSize().y / ventana_alto);
 	//inicializo objetos Nivel 1.
 	cannon2 = new cannon_Sprite;
 
@@ -563,44 +684,36 @@ void Game::inicializar_objetos()
 	//Menu pantalla inicial
 	font_menu = new Font;
 	font_menu->loadFromFile("recursos/letra.ttf");
-	jugar = new Text;
-	jugar->setFont(*font_menu);
-	jugar->setCharacterSize(45);
-	jugar->setFillColor(Color::Red);
-	jugar->setString("Jugar");
-	jugar->setOutlineColor(Color::White);
 
+	jugar = new Text;
+	inicializarTexto(jugar, 35, Color::Red, Color::White, "Jugar", NULL);
+	texto_pos(jugar, 35, 170);
+	
 	Salir = new Text;
-	Salir->setFont(*font_menu);
-	Salir->setCharacterSize(45);
-	Salir->setFillColor(Color::Red);
-	Salir->setString("Salir");
-	Salir->setPosition(5, 10);
-	Salir->setOutlineColor(Color::White);
+	inicializarTexto(Salir, 35, Color::Red, Color::White, "Salir", NULL);
+	texto_pos(Salir, 35, 250);
 
 	//texto del cargador de ragdols
 	tx_cargador = new Text;
-	tx_cargador->setFont(*font_menu);
-	tx_cargador->setCharacterSize(20);
-	tx_cargador->setFillColor(Color::Black);
-	tx_cargador->setString("Disparos restantes: " + to_string(contador_ragdoll));
-	tx_cargador->setPosition(5, 10);
-	tx_cargador->setOutlineColor(Color::White);
+	inicializarTexto(tx_cargador, 20, Color::Black, Color::White, "Disparos restantes: ", contador_ragdoll);
+	texto_pos(tx_cargador, 10, 575);
+	tx_cargador->setOutlineThickness(5);
 
 	//texto de objetivo
 	tx_objetivo = new Text;
-	tx_objetivo->setFont(*font_menu);
-	tx_objetivo->setCharacterSize(20);
-	tx_objetivo->setFillColor(Color::Yellow);
-	tx_objetivo->setString("Objetivos en zona: " + to_string(puntajeNivel1));
-	tx_objetivo->setPosition(5, 10);
-	tx_objetivo->setOutlineColor(Color::White);
+	inicializarTexto(tx_objetivo, 20, Color::Yellow, Color::Black, "Objetivos en zona: ", puntajeNivel1);
+	texto_pos(tx_objetivo, 300, 575);
+	tx_objetivo->setOutlineThickness(5);
+
+	Perdiste = new Text;
+	inicializarTexto(Perdiste, 35, Color::Black, Color::White, "Perdiste!!!",NULL);
+	texto_pos(Perdiste, 300, 300);
+
+	Reiniciar = new Text;
+	inicializarTexto(Reiniciar, 35, Color::Black, Color::White, "Reiniciar", NULL);
+	texto_pos(Reiniciar,35, 170);
 
 	//transformo las cordenadas 
-	texto_pos(jugar, 300, 200);
-	texto_pos(Salir, 300, 300);
-	texto_pos(tx_cargador, 10, 575);
-	texto_pos(tx_objetivo, 300, 575);
 }
 
 void Game::texto_pos(Text* texto, int x, int y)
@@ -611,6 +724,24 @@ void Game::texto_pos(Text* texto, int x, int y)
 	texto->setPosition(posicion.x, posicion.y);
 	//escalo el texto segun la camara y la ventana
 	texto->setScale(camara1->getSize().x / ventana_ancho, camara1->getSize().y / ventana_alto);
+}
+
+void Game::inicializarTexto(Text* texto,int size, Color color, Color color2, string str1, int strVariable)
+{
+	//metodo usado para simplificar la aplicacion de texto en pantalla.
+
+	texto->setFont(*font_menu);
+	texto->setCharacterSize(size);
+	texto->setFillColor(color);
+	if (strVariable != NULL)
+	{
+		texto->setString(str1 + to_string(strVariable));
+	}
+	else
+	{
+		texto->setString(str1);
+	}
+	texto->setOutlineColor(color2);
 }
 
 void Game::Go() {

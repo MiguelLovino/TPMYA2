@@ -25,6 +25,7 @@ public:
 	void Actualizar();
 	RectangleShape get_rect() { return *rec_caja; }
 	bool enPosicion = false;
+	bool enMovimiento();
 	void Destruir(b2World *mundo);
 };
 

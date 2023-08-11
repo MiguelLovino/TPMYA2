@@ -51,6 +51,18 @@ void Caja::Actualizar()
 	caja_dinamica->actualizar_ragdol();
 }
 
+bool Caja::enMovimiento()
+{
+	if (bod_caja->GetLinearVelocity().x == 0 && bod_caja->GetLinearVelocity().y == 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 void Caja::Destruir(b2World* mundo)
 {
 	mundo->DestroyBody(bod_caja);
