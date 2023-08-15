@@ -26,8 +26,6 @@ cannon_Sprite::cannon_Sprite()
 
 void cannon_Sprite::dibujar(RenderWindow* ventana)
 {
-	int coordx = 75;
-	int coordy = 550;
 	spr_canon->setPosition(ventana->mapPixelToCoords({ coordx, coordy }));
 	spr_rueda->setPosition(ventana->mapPixelToCoords({ coordx, coordy }));
 	origenpoint.setPosition(ventana->mapPixelToCoords({ coordx, coordy }));
@@ -37,24 +35,26 @@ void cannon_Sprite::dibujar(RenderWindow* ventana)
 	//ventana->draw(origenpoint);
 }
 
-void cannon_Sprite::actualizar(Vector2f mouse_m, RenderWindow* ventana)
+void cannon_Sprite::actualizar(Vector2f mouse_m, RenderWindow* ventana,bool nivel1)
 {
 	float angulo = atan2f(mouse_m.y - origenpoint.getPosition().y, mouse_m.x - origenpoint.getPosition().x);
 	
 	angulo = angulo * 180 / 3.14159;
 
 	//limite de rotacion del cañon
-	
-	
-	if (angulo < -100)
+	if (nivel1 && angulo <= -100)
 	{
 		angulo = -100;
 	}
-	if (angulo > 5)
+	if (!nivel1 && angulo < 180 && angulo > 90 )
 	{
-		angulo = 5;
+		angulo = 180;
 	}
-
+	if (angulo > 0 && angulo < 90)
+	{
+		angulo = 0;
+	}
+	//cout << angulo << endl;
 	spr_canon->setRotation(angulo);
 
 }

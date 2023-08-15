@@ -9,7 +9,7 @@ Game::Game(int ancho, int alto, string titulo)
 	tiempoFrame = 1.f / fps;
 	pWnd->setFramerateLimit(fps);
 	pWnd->setMouseCursorVisible(false);
-	//pWnd->setMouseCursorGrabbed(true);
+	pWnd->setMouseCursorGrabbed(true);
 	set_zoom();
 	cargar_imagenes();
 	iniciar_fisica();
@@ -27,7 +27,7 @@ void Game::UpdateGame() //actualizo los objetos
 	spr_mira->setPosition(pWnd->mapPixelToCoords(Mouse::getPosition(*pWnd)));
 
 	//actualizo el cannon
-	cannon2->actualizar(world_pos, pWnd);
+	cannon2->actualizar(world_pos, pWnd,Nivel_1);
 
 	//actualizo la potencia del disparo del ragdol
 	float X1 = world_pos.x;
@@ -56,6 +56,8 @@ void Game::UpdateGame() //actualizo los objetos
 	}
 
 	tx_cargador->setString("Disparos restantes: " + to_string(contador_ragdoll));
+
+	
 	
 }
 
@@ -137,7 +139,7 @@ void Game::Nivel_1_actualizar()
 	}
 	for (int i = 0; i < 4; i++)
 	{
-		pisolino[i]->actualizar_ragdol();
+		//pisolino[i]->actualizar_ragdol();
 	}
 
 	//mejorar
@@ -156,7 +158,7 @@ void Game::Nivel_1_actualizar()
 	//consulto si alguna de las cajas se encuentran en la meta.
 	for (int i = 0; i < 4; i++)
 	{
-		if (cajas[i] != NULL)
+		if (cajas[i]->get_rect().getGlobalBounds().intersects(metaA->get_spr().getGlobalBounds()))
 		{
 
 		int c_pos_X = cajas[i]->get_rect().getPosition().x;
@@ -170,66 +172,26 @@ void Game::Nivel_1_actualizar()
 				cajas[i]->enPosicion = true;
 				//sumo un punto a la condicion de pasar de nivel
 				puntajeNivel1++;
-			    
+				cout << " sumo 1 punto " << endl;
 			}
 		}
 
 		}
 	}
+	/***************************PASAR DE NIVEL*******************************************/
 	//si almenos 3 cajas se encuentran en la zona de meta, se pasa de pantalla
 	if (puntajeNivel1 == 3)
 	{	
 		//activo y desactivo las banderas correspondientes.
 		Nivel_1 = false;
 		Nivel_2 = true;
-		//debo de eliminar los siguentes objetos, o reposicionarlos.
-		//los pisos(eliminados), las cajas, las cadenasEstaticasMovibles, la bandera.
-
-		//metodo destruir.
-		//destruir platafomas del nivel 1.
-
-		for (int i = 0; i < 3; i++)
-		{
-			if (mov_p_forma[i] != NULL)
-			{
-				mov_p_forma[i]->destruir_plataforma();
-				mov_p_forma[i] = NULL;
-			}
-		}
-
-		//destruir piso estaticos del nivel 1
-
-		for (int i = 0; i < 4; i++)
-		{
-			if (plataforma_estatica[i] != NULL)
-			{
-				plataforma_estatica[i]->Destruir(mundo);
-				plataforma_estatica[i] = NULL;
-			}
-		}
-
-		//destruir cajas
-		for (int i = 0; i < 4; i++)
-		{
-			if (cajas[i] != NULL)
-			{
-				cajas[i]->Destruir(mundo);
-				cajas[i] = NULL;
-			}
-		}
 		
+		//borro los objetos del nivel 1
+		AdmNiveles->BorrarNivel1(mov_p_forma, plataforma_estatica, *mundo, cajas, arr_gallardo, contador_ragdoll, puntajeNivel1);
 
-		//destruyo todos los ragdols y reseteo el array para volver a disparar
-		for (int i = 0; i < 10; i++)
-		{
-			if (arr_gallardo[i] != NULL)
-			{
-				arr_gallardo[i]->sacar_cabeza(); //cambiar nombre
-				arr_gallardo[i] = NULL;
-			}
-		}
-		//reseteo el cargador de ragdolls
-		contador_ragdoll = 10;
+		//creo los objetos del nivel 2
+		AdmNiveles->CargarNivel2(plataforma_estatica, *mundo, cajas, *camara1, cannon2);
+	
 	}
 	}
 }
@@ -270,7 +232,7 @@ void Game::Nivel_1_dibujar()
 		//canon
 		cannon2->dibujar(pWnd);
 
-		//libros
+		//pisos estaticos flotantes
 		for (int i = 0; i < 4; i++)
 		{
 			plataforma_estatica[i]->Dibujar(pWnd);
@@ -325,6 +287,14 @@ void Game::Nivel_2_actualizar()
 				}
 			}
 		}
+
+		for (int i = 0; i < 4; i++)
+		{
+			if (cajas[i] != NULL)
+			{
+				cajas[i]->Actualizar();
+			}
+		}
 		
 	}
 }
@@ -335,7 +305,7 @@ void Game::Nivel_2_dibujar()
 	{
 		pWnd->draw(*spr_fondo);
  
-		pWnd->draw(*spr_mira);
+		
 
 		for(int i = 0; i < 4; i++) pWnd->draw(*piso[i]);
 
@@ -348,10 +318,38 @@ void Game::Nivel_2_dibujar()
 				arr_gallardo[i]->dibujar_ragdol(pWnd);
 			}
 		}
+		//pisos estaticos flotantes
+		for (int i = 0; i < 4; i++)
+		{
+			if (plataforma_estatica[i] != NULL)
+			{
+				plataforma_estatica[i]->Dibujar(pWnd);
+			}
+		}
+
+		//cajas
+		for (int i = 0; i < 4; i++)
+		{
+			if (cajas[i] != NULL)
+			{
+				cajas[i]->Dibujar(pWnd);
+			}
+		}
+		//dibujo el contador
+		pWnd->draw(*tx_objetivo);
 		//dibujar cargador
 		pWnd->draw(*tx_cargador);
 		//canon
 		cannon2->dibujar(pWnd);
+
+		if (cargador_ragdol_vacio == true)
+		{
+			pWnd->draw(*spr_menu);
+			pWnd->draw(*Reiniciar);
+			pWnd->draw(*Salir);
+			pWnd->draw(*Perdiste);
+		}
+		pWnd->draw(*spr_mira);
 	}
 }
 
@@ -520,6 +518,11 @@ void Game::ProcessEvent(Event& evt)
 			{
 				pWnd->close();
 			}
+
+			if (evt.key.code == Keyboard::Num1)
+			{
+				puntajeNivel1++;
+			}
 	}
 
 	//si hago click en jugar, avanzo a nivel 1, si hago click en salir, salgo del juego
@@ -556,6 +559,8 @@ void Game::ProcessEvent(Event& evt)
 			{
 				//limpio la escena para volver a empezar
 				//destruir cajas
+				/*
+				
 				for (int i = 0; i < 4; i++)
 				{
 					if (cajas[i] != NULL)
@@ -569,6 +574,13 @@ void Game::ProcessEvent(Event& evt)
 				cajas[1] = new Caja("recursos/caja.jpg", mundo, { 59.5, 82.59 }, { 0.70, 0.75 }, camara1);//arriba
 				cajas[2] = new Caja("recursos/caja.jpg", mundo, { 51.70, 98.59 }, { 0.70, 0.75 }, camara1);
 				cajas[3] = new Caja("recursos/caja.jpg", mundo, { 51, 102 }, { 0.70, 0.75 }, camara1);
+
+				*/
+
+				cajas[0]->reiniciar_pos();
+				cajas[1]->reiniciar_pos();
+				cajas[2]->reiniciar_pos();
+				cajas[3]->reiniciar_pos();
 
 				//destruyo todos los ragdols y reseteo el array para volver a disparar
 				for (int i = 0; i < 10; i++)
@@ -641,6 +653,8 @@ float Game::radianes_a_grados(float radianes)
 
 void Game::inicializar_objetos()
 {
+	AdmNiveles = new Niveles;
+
 	//inicializo objetos generales
 		/*MIRA*/
 	txt_mira = new Texture;
@@ -669,15 +683,15 @@ void Game::inicializar_objetos()
 	mov_p_forma[1] = new Plataforma_movible(mundo, 0.20, { 50, 80 });
 	mov_p_forma[2] = new Plataforma_movible(mundo, 0.22, { 56, 80 });
 	//bordes de pantalla
+	plataforma_estatica[0] = new Pared_estatica("recursos/matlib.jpg", mundo, { 50, 104 }, { 3, 1 }, camara1);
 	plataforma_estatica[1] = new Pared_estatica("recursos/matlib.jpg", mundo, { 60, 82.59 }, { 3, 1 }, camara1);//arriba
 	plataforma_estatica[2] = new Pared_estatica("recursos/matlib.jpg", mundo, { 52, 98.59 }, { 3, 1 }, camara1);
-	plataforma_estatica[0] = new Pared_estatica("recursos/matlib.jpg", mundo, { 50, 104 }, { 3, 1 }, camara1);
 	plataforma_estatica[3] = new Pared_estatica("recursos/matlib.jpg", mundo, { 59, 104.1 }, { 3, 1 }, camara1);
 	//bajas movibles
-	cajas[0] = new Caja("recursos/caja.jpg", mundo, { 60.5, 82.59 }, { 0.70, 0.75 }, camara1);//arriba
-	cajas[1] = new Caja("recursos/caja.jpg", mundo, { 59.5, 82.59 }, { 0.70, 0.75 }, camara1);//arriba
-	cajas[2] = new Caja("recursos/caja.jpg", mundo, { 51.70, 98.59 }, { 0.70, 0.75 }, camara1);
-	cajas[3] = new Caja("recursos/caja.jpg", mundo, { 51, 102 }, { 0.70, 0.75 }, camara1);
+	cajas[0] = new Caja("recursos/caja.jpg", mundo, { 61, 80.80 }, { 0.70, 0.75 }, camara1);//arriba
+	cajas[1] = new Caja("recursos/caja.jpg", mundo, { 59, 80.80 }, { 0.70, 0.75 }, camara1);//arriba
+	cajas[2] = new Caja("recursos/caja.jpg", mundo, { 51.70, 96.80 }, { 0.70, 0.75 }, camara1);//medio
+	cajas[3] = new Caja("recursos/caja.jpg", mundo, { 51, 102.25 }, { 0.70, 0.75 }, camara1);//abajo
 
 	metaA = new ZonaGanar("recursos/bandera.png", { 63.5,101 });
 

@@ -12,7 +12,7 @@ private:
 
 	Texture* tex_caja;
 	RectangleShape* rec_caja;
-
+	b2Vec2 posicion_inicial;
 	b2Body* bod_caja;
 	b2BodyDef boddef_caja;
 	b2Fixture* fix_caja;
@@ -27,5 +27,6 @@ public:
 	bool enPosicion = false;
 	bool enMovimiento();
 	void Destruir(b2World *mundo);
+	void reiniciar_pos();
 };
 

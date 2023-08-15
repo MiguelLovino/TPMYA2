@@ -7,7 +7,7 @@ Caja::Caja(String textura, b2World* mundo, b2Vec2 pos, Vector2f tam, View* camar
 
 	//pos
 	boddef_caja.position = pos;
-
+	posicion_inicial = pos;
 	//en mundo
 	bod_caja = mundo->CreateBody(&boddef_caja);
 
@@ -66,6 +66,18 @@ bool Caja::enMovimiento()
 void Caja::Destruir(b2World* mundo)
 {
 	mundo->DestroyBody(bod_caja);
+}
+
+void Caja::reiniciar_pos()
+{
+	//detengo la velocidad angular
+	bod_caja->SetAngularVelocity(0);
+	//detengo la velocidad lineal
+	bod_caja->SetLinearVelocity({0,0});
+	//reinicio la posicion de la caja.
+	bod_caja->SetTransform(posicion_inicial, 0);
+	//reinicio la bandera de posicion
+	enPosicion = false;
 }
 
 

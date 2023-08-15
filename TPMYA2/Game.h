@@ -12,6 +12,7 @@
 #include "Pared_estatica.h"
 #include "Caja.h"
 #include "ZonaGanar.h"
+#include "Niveles.h"
 
 using namespace sf;
 using namespace std;
@@ -41,7 +42,9 @@ private:
 	b2World* mundo;
 	float gravedad = 9.8f;
 
-	// 
+	//niveles
+	Niveles* AdmNiveles;
+
 	//piso
 	RectangleShape* piso[4];
 	b2Vec2 piso_posicion[4];
