@@ -31,7 +31,7 @@ private:
 public:
 	Niveles();
 
-	void CargarNivel1();
+	void CargarNivel1(Plataforma_movible* mov_p_forma[], ZonaGanar* &metaA, Pared_estatica* plataforma_estatica[], b2World& mundo, Caja* cajas[], View& camara1, cannon_Sprite* cannon2);
 	void BorrarNivel1(Plataforma_movible* mov_p_forma[], Pared_estatica* plataforma_estatica[], b2World &mundo, Caja* cajas[], Ragdol* arr_gallardo[], int &contador_ragdoll, int& contador_objetivo);
 	void CargarNivel2(Pared_estatica* plataforma_estatica[], b2World& mundo, Caja* cajas[], View &camara1, cannon_Sprite* cannon2);
 	void BorrarNivel2();

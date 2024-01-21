@@ -13,6 +13,7 @@
 #include "Caja.h"
 #include "ZonaGanar.h"
 #include "Niveles.h"
+#include "ADMSound.h"
 
 using namespace sf;
 using namespace std;
@@ -98,7 +99,7 @@ private:
 
 	//cargador de ragdolls
 	bool cargador_ragdol_vacio = false;
-	int contador_ragdoll = 1;
+	int contador_ragdoll = 10;
 	Text* tx_cargador;
 	//texto objetivo
 	Text* tx_objetivo;
@@ -118,11 +119,19 @@ private:
 	int ventana_alto;
 	int puntajeNivel1 = 0;
 
+	//bandera de menu
+	bool salirSelec = true;
+	bool jugarSelec = true;
+	bool reiniciarSelec = true;
+	//sonido
+	ADMSound *AdministradorSonido;
+
 public: Game(int ancho, int alto, string titulo);
 	  ~Game(void);
 	  void actualizar_cargador_ragdoll();
 	  void Go();
 	  void cargar_imagenes();
+	  void cargar_sonido();
 	  void set_zoom();
 	  void iniciar_fisica();
 	  void actualizar_fisica();

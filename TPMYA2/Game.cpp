@@ -11,6 +11,7 @@ Game::Game(int ancho, int alto, string titulo)
 	pWnd->setMouseCursorVisible(false);
 	pWnd->setMouseCursorGrabbed(true);
 	set_zoom();
+	cargar_sonido();
 	cargar_imagenes();
 	iniciar_fisica();
 	inicializar_objetos();
@@ -65,9 +66,19 @@ void Game::Nivel_inicial_colisiones()
 {
 	if (Nivel_inicio)
 	{
-		if (spr_mira->getGlobalBounds().intersects(Salir->getGlobalBounds()))
+		// si la mira, choca con el texto salir
+		if (spr_mira->getGlobalBounds().intersects(Salir->getGlobalBounds()))//true
 		{
-			Salir->setOutlineThickness(5);
+			if (salirSelec)
+			{
+				//resalta de color blanco el texto
+				Salir->setOutlineThickness(5);
+				//cout << "tiene que poner el texto de color blanco" << endl;
+				AdministradorSonido->NavegarMenu();
+				salirSelec = false;
+			}
+
+			//si hago click izquierdo, salgo del juego
 			if (Mouse::isButtonPressed(Mouse::Left))
 			{
 				
@@ -75,10 +86,14 @@ void Game::Nivel_inicial_colisiones()
 				
 			}
 		}
+		//de lo contrario (cuando la colicion sea falsa)
 		else
 		{
+			//saca el resaltado
 			Salir->setOutlineThickness(0);
+			salirSelec = true;
 		}
+		
 	}
 }
 void Game::Nivel_inicial_actualizar()
@@ -158,24 +173,29 @@ void Game::Nivel_1_actualizar()
 	//consulto si alguna de las cajas se encuentran en la meta.
 	for (int i = 0; i < 4; i++)
 	{
-		if (cajas[i]->get_rect().getGlobalBounds().intersects(metaA->get_spr().getGlobalBounds()))
+		if (cajas[i] != NULL && metaA != NULL)
 		{
 
-		int c_pos_X = cajas[i]->get_rect().getPosition().x;
-		int c_pos_Y = cajas[i]->get_rect().getPosition().y;
-
-		if (c_pos_X > 61 && c_pos_X < 65 && c_pos_Y > 93 && c_pos_Y < 106)
-		{
-			if (cajas[i]->enPosicion == false)
+			if (cajas[i]->get_rect().getGlobalBounds().intersects(metaA->get_spr().getGlobalBounds()))
 			{
-				//activo una bandera para saber que esta en el lugar correcto
-				cajas[i]->enPosicion = true;
-				//sumo un punto a la condicion de pasar de nivel
-				puntajeNivel1++;
-				cout << " sumo 1 punto " << endl;
-			}
-		}
 
+			int c_pos_X = cajas[i]->get_rect().getPosition().x;
+			int c_pos_Y = cajas[i]->get_rect().getPosition().y;
+
+				if (c_pos_X > 61 && c_pos_X < 65 && c_pos_Y > 93 && c_pos_Y < 106)
+				{
+					if (cajas[i]->enPosicion == false)
+					{
+						//activo una bandera para saber que esta en el lugar correcto
+						cajas[i]->enPosicion = true;
+						//sumo un punto a la condicion de pasar de nivel
+						puntajeNivel1++;
+						AdministradorSonido->SumarPunto();
+						//cout << " sumo 1 punto " << endl;
+					}
+				}
+
+			}
 		}
 	}
 	/***************************PASAR DE NIVEL*******************************************/
@@ -204,7 +224,15 @@ void Game::Nivel_1_dibujar()
 		pWnd->draw(*spr_fondo);
 
 		//zona meta
-		metaA->Dibujar(pWnd);
+		if (metaA != NULL)
+		{
+			metaA->Dibujar(pWnd);
+			//cout << "se dibujar la bandera" << endl;
+		}
+		else if (metaA == NULL)
+		{
+			//cout << "el objeto no se crea" << endl;
+		}
 
 		//plataformas movibles
 		for (int i = 0; i < 3; i++)
@@ -399,6 +427,11 @@ void Game::cargar_imagenes()
 
 }
 
+void Game::cargar_sonido()
+{
+	AdministradorSonido = new ADMSound;
+}
+
 void Game::iniciar_fisica()
 {
 	//creo el mundo
@@ -464,7 +497,7 @@ void Game::ProcessEvent(Event& evt)
 	if (evt.type == Event::MouseButtonPressed && evt.mouseButton.button == Mouse::Left)
 	{
 		mousePresionado = true;
-		cout << "presiono el click izquierdo" << endl;
+		//cout << "presiono el click izquierdo" << endl;
 	}
 
 
@@ -497,7 +530,11 @@ void Game::ProcessEvent(Event& evt)
 						tiempo2 = tiempo1;
 						contador_ragdoll--;
 						mousePresionado = false;
+
+						AdministradorSonido->DisparoCanion();
+
 						break;
+
 					}
 				}
 			}
@@ -529,16 +566,20 @@ void Game::ProcessEvent(Event& evt)
 	//checkeo la colicion de los sprite
 	if (Nivel_inicio && spr_mira->getGlobalBounds().intersects(jugar->getGlobalBounds()))
 	{
-		//agrego contorno
-		jugar->setOutlineThickness(5);
-
+		if (jugarSelec)
+		{
+			//agrego contorno
+			jugar->setOutlineThickness(5);
+			AdministradorSonido->NavegarMenu();
+			jugarSelec = false;
+		}
 		//si mousePresionado es verdadero y suelto el boton izquierdo
 		if (mousePresionado && evt.type == Event::MouseButtonReleased && evt.mouseButton.button == Mouse::Left)
 		{
 			//realizo el cambio de pantalla.
 			Nivel_inicio = false;
 			Nivel_1 = true;
-			cout << "suelto jugar" << endl;
+			//cout << "suelto jugar" << endl;
 			mousePresionado = false;
 		}
 	}
@@ -546,6 +587,8 @@ void Game::ProcessEvent(Event& evt)
 	{
 		//si no colisiono, le saco el contorno
 		jugar->setOutlineThickness(0);
+		jugarSelec = true;
+		
 	}
 	/***********************************reinicio nivel ***************************************/
 	if (cargador_ragdol_vacio == true)
@@ -553,30 +596,16 @@ void Game::ProcessEvent(Event& evt)
 		//si hago click en reiniciar, reseteo el nivel, si hago click en salir, salgo del juego
 		if (spr_mira->getGlobalBounds().intersects(Reiniciar->getGlobalBounds()))
 		{
-			Reiniciar->setOutlineThickness(5);
-
+			if (reiniciarSelec)
+			{
+				Reiniciar->setOutlineThickness(5);
+				AdministradorSonido->NavegarMenu();
+				reiniciarSelec = false;
+			}
 			if (mousePresionado && evt.type == Event::MouseButtonReleased && evt.mouseButton.button == Mouse::Left)
 			{
 				//limpio la escena para volver a empezar
 				//destruir cajas
-				/*
-				
-				for (int i = 0; i < 4; i++)
-				{
-					if (cajas[i] != NULL)
-					{
-						cajas[i]->Destruir(mundo);
-						cajas[i] = NULL;
-					}
-				}
-				//creo las cajas nuevamente
-				cajas[0] = new Caja("recursos/caja.jpg", mundo, { 60.5, 82.59 }, { 0.70, 0.75 }, camara1);//arriba
-				cajas[1] = new Caja("recursos/caja.jpg", mundo, { 59.5, 82.59 }, { 0.70, 0.75 }, camara1);//arriba
-				cajas[2] = new Caja("recursos/caja.jpg", mundo, { 51.70, 98.59 }, { 0.70, 0.75 }, camara1);
-				cajas[3] = new Caja("recursos/caja.jpg", mundo, { 51, 102 }, { 0.70, 0.75 }, camara1);
-
-				*/
-
 				cajas[0]->reiniciar_pos();
 				cajas[1]->reiniciar_pos();
 				cajas[2]->reiniciar_pos();
@@ -596,17 +625,23 @@ void Game::ProcessEvent(Event& evt)
 				contador_ragdoll = 10;
 				puntajeNivel1 = 0;
 				mousePresionado = false;
-				cout << " suelto el reset" << endl;
+				//cout << " suelto el reset" << endl;
 			}
 		}
 		else
 		{
 			Reiniciar->setOutlineThickness(0);
+			reiniciarSelec = true;
 		}
 
 		if (spr_mira->getGlobalBounds().intersects(Salir->getGlobalBounds()))
 		{
-			Salir->setOutlineThickness(5);
+			if (salirSelec)
+			{
+				Salir->setOutlineThickness(5);
+				AdministradorSonido->NavegarMenu();
+				salirSelec = false;
+			}
 			if (Mouse::isButtonPressed(Mouse::Left))
 			{
 				pWnd->close();
@@ -615,6 +650,7 @@ void Game::ProcessEvent(Event& evt)
 		else
 		{
 			Salir->setOutlineThickness(0);
+			salirSelec = true;
 		}
 	}
 
@@ -622,7 +658,7 @@ void Game::ProcessEvent(Event& evt)
 	if (mousePresionado && evt.type == Event::MouseButtonReleased && evt.mouseButton.button == Mouse::Left)
 	{
 		mousePresionado = false;
-		cout << "suelto el click izquierdo" << endl;
+		//cout << "suelto el click izquierdo" << endl;
 	}
 }
 
@@ -678,22 +714,9 @@ void Game::inicializar_objetos()
 	{
 		pisolino[i] = new Avatar(bod_piso[i], piso[i]);
 	}
-	//obstaculos
-	mov_p_forma[0] = new Plataforma_movible(mundo, 0.13, { 45, 80 });
-	mov_p_forma[1] = new Plataforma_movible(mundo, 0.20, { 50, 80 });
-	mov_p_forma[2] = new Plataforma_movible(mundo, 0.22, { 56, 80 });
-	//bordes de pantalla
-	plataforma_estatica[0] = new Pared_estatica("recursos/matlib.jpg", mundo, { 50, 104 }, { 3, 1 }, camara1);
-	plataforma_estatica[1] = new Pared_estatica("recursos/matlib.jpg", mundo, { 60, 82.59 }, { 3, 1 }, camara1);//arriba
-	plataforma_estatica[2] = new Pared_estatica("recursos/matlib.jpg", mundo, { 52, 98.59 }, { 3, 1 }, camara1);
-	plataforma_estatica[3] = new Pared_estatica("recursos/matlib.jpg", mundo, { 59, 104.1 }, { 3, 1 }, camara1);
-	//bajas movibles
-	cajas[0] = new Caja("recursos/caja.jpg", mundo, { 61, 80.80 }, { 0.70, 0.75 }, camara1);//arriba
-	cajas[1] = new Caja("recursos/caja.jpg", mundo, { 59, 80.80 }, { 0.70, 0.75 }, camara1);//arriba
-	cajas[2] = new Caja("recursos/caja.jpg", mundo, { 51.70, 96.80 }, { 0.70, 0.75 }, camara1);//medio
-	cajas[3] = new Caja("recursos/caja.jpg", mundo, { 51, 102.25 }, { 0.70, 0.75 }, camara1);//abajo
-
-	metaA = new ZonaGanar("recursos/bandera.png", { 63.5,101 });
+	
+	//cargo el nivel 1
+	AdmNiveles->CargarNivel1(mov_p_forma, metaA, plataforma_estatica, *mundo, cajas, *camara1, cannon2);
 
 	//Menu pantalla inicial
 	font_menu = new Font;

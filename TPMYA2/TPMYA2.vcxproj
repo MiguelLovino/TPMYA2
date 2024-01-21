@@ -130,6 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ADMSound.h" />
     <ClInclude Include="Avatar.h" />
     <ClInclude Include="Caja.h" />
     <ClInclude Include="Cannon.h" />
@@ -142,6 +143,7 @@
     <ClInclude Include="ZonaGanar.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ADMSound.cpp" />
     <ClCompile Include="Avatar.cpp" />
     <ClCompile Include="Caja.cpp" />
     <ClCompile Include="Cannon.cpp" />

@@ -16,7 +16,8 @@ ZonaGanar::~ZonaGanar()
 	delete tex_zona;
 }
 
-void ZonaGanar::Dibujar(RenderWindow *ventana)
+void ZonaGanar::Dibujar(RenderWindow* ventana)
 {
 	ventana->draw(*spr_zona);
 }
+
