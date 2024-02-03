@@ -70,7 +70,7 @@ void Niveles::BorrarNivel1(Plataforma_movible *mov_p_forma[],Pared_estatica* pla
 	{
 		if (arr_gallardo[i] != NULL)
 		{
-			arr_gallardo[i]->sacar_cabeza(); //cambiar nombre
+			arr_gallardo[i]->destruir_Ragdoll(); //cambiar nombre
 			arr_gallardo[i] = NULL;
 		}
 	}

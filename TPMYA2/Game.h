@@ -5,7 +5,6 @@
 #include "Avatar.h"
 #include <string> 
 #include "Ragdol.h"
-#include "Cannon.h"
 #include "cannon_Sprite.h"
 #include <iostream>
 #include "Plataforma_movible.h"
@@ -53,7 +52,10 @@ private:
 	//niveles
 	Niveles* AdmNiveles;
 
-	//piso
+	//********borde de la pantalla*********//
+
+	//en el refactor, hacer una clase.
+
 	RectangleShape* piso[4];
 	b2Vec2 piso_posicion[4];
 
@@ -64,17 +66,16 @@ private:
 
 	Avatar* pisolino[4];
 
+	//*************************************//
 	float fps, tiempoFrame;
 
 	//clase ragdoll
-	Ragdol* arr_gallardo[10];
+	Ragdol* bala_Ragdoll[10];
 	int cant_arr_gallardo = 0;
 
 	//prueba de ragdoll
 	Ragdol* ragdolPrueba;
 
-	//clase cannon
-	Cannon* cannon_ragdoll;
 	//clase cannon sprite
 	cannon_Sprite* cannon2;
 
@@ -111,8 +112,10 @@ private:
 	bool cargador_ragdol_vacio = false;
 	int contador_ragdoll = 10;
 	Text* tx_cargador;
+
 	//texto objetivo
 	Text* tx_objetivo;
+
 	//texto del menu
 	Font *font_menu;
 	Text* jugar;
@@ -133,6 +136,7 @@ private:
 	bool salirSelec = true;
 	bool jugarSelec = true;
 	bool reiniciarSelec = true;
+
 	//sonido
 	ADMSound *AdministradorSonido;
 

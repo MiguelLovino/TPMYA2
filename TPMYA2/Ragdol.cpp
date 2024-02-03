@@ -2,7 +2,7 @@
 
 Ragdol::Ragdol(b2World* mundo, b2Vec2 m, float rot_cannon)
 {
-	//imagen
+	//la imagen de cada parte del ragdoll
 	for (int i = 0; i < 6; i++)
 	{
 		fig_ragdol[i] = new RectangleShape;
@@ -32,11 +32,15 @@ Ragdol::Ragdol(b2World* mundo, b2Vec2 m, float rot_cannon)
 
 	for (int i = 0; i < 6; i++)
 	{
+		//asigno el angulo
 		boddef_ragdol[i].angle = 0.0f;
+		//asigno el tipo del cuerpo (dinamico para que se mueva con las fuerzas)
 		boddef_ragdol[i].type = b2_dynamicBody;
+		//le asigno a cada cuerpo, su definicion que va a tener en el mundo.
 		bod_ragdol[i] = mundo->CreateBody(&boddef_ragdol[i]);
 	}
 
+	//creo las formas que van a tener las partes del ragdoll
 	b2PolygonShape shape_ragdol[6];
 
 	shape_ragdol[0].SetAsBox(0.1, 0.1); //cabeza
@@ -46,14 +50,19 @@ Ragdol::Ragdol(b2World* mundo, b2Vec2 m, float rot_cannon)
 	shape_ragdol[4].SetAsBox(0.07, 0.4); //piernad
 	shape_ragdol[5].SetAsBox(0.07, 0.4); //piernai
 
+	//asigno las opciones de la definicion del fixture a gusto.
 	for (int i = 0; i < 6; i++)
 	{
+		//asigno la forma previamente creada
 		fixdef_ragdol[i].shape = &shape_ragdol[i];
+		//densidad
 		fixdef_ragdol[i].density = 0.5f;
+		//friccion
 		fixdef_ragdol[i].friction = 0.1f;
+		//restitucion (rebote)
 		fixdef_ragdol[i].restitution = 0.7f;
+		//creo el fixture con la definiciones previamente creadas y la asigno la fixture.
 		fix_ragdol[i] = bod_ragdol[i]->CreateFixture(&fixdef_ragdol[i]);
-
 	}
 
 	//inicializacion de resortes
@@ -72,17 +81,17 @@ Ragdol::Ragdol(b2World* mundo, b2Vec2 m, float rot_cannon)
 
 	for (int i = 0; i < 5; i++)
 	{
-		joint_def_ragdolino[i].dampingRatio = 0.3f; //rebote
-		joint_def_ragdolino[i].frequencyHz = 4.f;
+		joint_def_ragdolino[i].dampingRatio = 0.9f; //rebote
+		joint_def_ragdolino[i].frequencyHz = 0.0f;
 		joint_def_ragdolino->collideConnected = true;
 		joint_def_ragdolino[i].length = 0.060f;
-		//joint_def_ragdolino[i].length = 0.025f;
 		joint_ragdolino[i] = (b2DistanceJoint*)mundo->CreateJoint(&joint_def_ragdolino[i]); //hay que castear
 	}
 
 	
 	//bod_ragdol[2]->SetTransform(bod_ragdol[2]->GetPosition(), rot_cannon);
 
+	//inicializo el ragdoll con su cuerpo(con fixture y definiciones ya implementadas, y su figura a utilizar)
 	for (int i = 0; i < 6; i++)
 	{
 		
@@ -104,7 +113,7 @@ void Ragdol::dibujar_ragdol(RenderWindow *ventana)
 	}
 }
 
-void Ragdol::sacar_cabeza() //destruir ragdoll
+void Ragdol::destruir_Ragdoll() //destruir ragdoll
 {
 	for (int i = 0; i < 6; i++)
 	{

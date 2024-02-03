@@ -80,7 +80,7 @@ void Avatar::actualizar_ragdol()
 
 }
 
-void Avatar::mover(float vel)
+void Avatar::mover(float vel_y)
 {
-	bod_avatar->SetTransform({ bod_avatar->GetPosition().x, bod_avatar->GetPosition().y + vel}, 0);
+	bod_avatar->SetTransform({ bod_avatar->GetPosition().x, bod_avatar->GetPosition().y + vel_y}, 0);
 }

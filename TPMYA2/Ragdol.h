@@ -31,7 +31,7 @@ public:
 	Avatar get_avatar(int i) { return *Ragdolino[i]; }
 	b2Fixture get_fixture(int i) { return *bod_ragdol[i]->GetFixtureList(); }
 	void dibujar_ragdol(RenderWindow *ventana);
-	void sacar_cabeza();
+	void destruir_Ragdoll();
 	void fuerza_disparo(float fuerza, float angulo);
 	void rotar_Ragdoll();
 

@@ -5,7 +5,6 @@
 #include "Avatar.h"
 #include <string> 
 #include "Ragdol.h"
-#include "Cannon.h"
 #include "cannon_Sprite.h"
 #include <iostream>
 #include "Plataforma_movible.h"

@@ -35,6 +35,7 @@ void Game::UpdateGame() //actualizo los objetos
 	float Y1 = world_pos.y;
 	float X2 = cannon2->get_sprite().getPosition().x;
 	float Y2 = cannon2->get_sprite().getPosition().y;
+	//la potencia se calcula entre la pocicion del cannon y la mira.
 	potencia_cannon = sqrtl(pow(X1 - X2,2) + pow(Y1 - Y2,2));
 
 	//actualizo el tiempo
@@ -144,17 +145,17 @@ void Game::Nivel_1_actualizar()
 	for (int i = 0; i < 10; i++)
 	{
 		//actualizo el arreglo de ragdols
-		if (arr_gallardo[i] != NULL)
+		if (bala_Ragdoll[i] != NULL)
 		{
 			for (int j = 0; j < 6; j++)
 			{
-				arr_gallardo[i]->get_avatar(j).actualizar_ragdol();
+				bala_Ragdoll[i]->get_avatar(j).actualizar_ragdol();
 			}
 		}
 	}
 	for (int i = 0; i < 4; i++)
 	{
-		//pisolino[i]->actualizar_ragdol();
+		pisolino[i]->actualizar_ragdol();
 	}
 
 	//mejorar
@@ -207,7 +208,7 @@ void Game::Nivel_1_actualizar()
 		Nivel_2 = true;
 		
 		//borro los objetos del nivel 1
-		AdmNiveles->BorrarNivel1(mov_p_forma, plataforma_estatica, *mundo, cajas, arr_gallardo, contador_ragdoll, puntajeNivel1);
+		AdmNiveles->BorrarNivel1(mov_p_forma, plataforma_estatica, *mundo, cajas, bala_Ragdoll, contador_ragdoll, puntajeNivel1);
 
 		//creo los objetos del nivel 2
 		AdmNiveles->CargarNivel2(plataforma_estatica, *mundo, cajas, *camara1, cannon2,pWnd);
@@ -241,28 +242,25 @@ void Game::Nivel_1_dibujar()
 			
 			if (mov_p_forma[i] != NULL) mov_p_forma[i]->dibujar(pWnd);
 		}
-		//canon
-		cannon2->dibujar(pWnd);
+		
 		//ragdols
 		for (int i = 0; i < 10; i++)
 		{
-			if (arr_gallardo[i] != NULL)
+			if (bala_Ragdoll[i] != NULL)
 			{
 				//dibujo los cuerpos de los ragdols
-				arr_gallardo[i]->dibujar_ragdol(pWnd);
+				bala_Ragdoll[i]->dibujar_ragdol(pWnd);
 			}
 		}
 
+		//canon
+		cannon2->dibujar(pWnd);
 
 		//piso
 		for (int i = 0; i < 4; i++)
 		{
 			pisolino[i]->dibujar_ragdol(*pWnd);
 		}
-
-		
-
-		
 
 		//pisos estaticos flotantes
 		for (int i = 0; i < 4; i++)
@@ -311,11 +309,11 @@ void Game::Nivel_2_actualizar()
 		for (int i = 0; i < 10; i++)
 		{
 			//actualizo el arreglo de ragdols
-			if (arr_gallardo[i] != NULL)
+			if (bala_Ragdoll[i] != NULL)
 			{
 				for (int j = 0; j < 6; j++)
 				{
-					arr_gallardo[i]->get_avatar(j).actualizar_ragdol();
+					bala_Ragdoll[i]->get_avatar(j).actualizar_ragdol();
 				}
 			}
 		}
@@ -345,10 +343,10 @@ void Game::Nivel_2_dibujar()
 		//ragdols
 		for (int i = 0; i < 10; i++)
 		{
-			if (arr_gallardo[i] != NULL)
+			if (bala_Ragdoll[i] != NULL)
 			{
 				//dibujo los cuerpos de los ragdols
-				arr_gallardo[i]->dibujar_ragdol(pWnd);
+				bala_Ragdoll[i]->dibujar_ragdol(pWnd);
 			}
 		}
 		//pisos estaticos flotantes
@@ -513,7 +511,7 @@ void Game::ProcessEvent(Event& evt)
 		{
 			for (int i = 0; i < 10; i++)
 			{
-				if (arr_gallardo[i] == NULL)
+				if (bala_Ragdoll[i] == NULL)
 				{
 					if (tiempo1 > tiempo2 + 1)
 					{
@@ -530,15 +528,14 @@ void Game::ProcessEvent(Event& evt)
 	
 						//aca debe de ir el resultado final de la operacion
 						//grados_a_radiannes(cannon2->get_sprite().getRotation()+ 90)
-						arr_gallardo[i] = new Ragdol(mundo, {boca_x,boca_y}, grados_a_radiannes(cannon2->get_sprite().getRotation() + 90));
-						arr_gallardo[i]->fuerza_disparo(potencia_cannon * 4, grados_a_radiannes(cannon2->get_sprite().getRotation() ));
+						bala_Ragdoll[i] = new Ragdol(mundo, {boca_x,boca_y}, grados_a_radiannes(cannon2->get_sprite().getRotation() + 90));
+						bala_Ragdoll[i]->fuerza_disparo(potencia_cannon * 4, grados_a_radiannes(cannon2->get_sprite().getRotation() ));
 					
 						tiempo2 = tiempo1;
 						contador_ragdoll--;
 						mousePresionado = false;
 
-						AdministradorSonido->DisparoCanion();
-
+						AdministradorSonido->DisparoCanion();					
 						break;
 
 					}
@@ -556,7 +553,7 @@ void Game::ProcessEvent(Event& evt)
 
 			//evento de teclado
 		case Event::KeyPressed:
-
+			 
 			if (evt.key.code == Keyboard::Escape)
 			{
 				pWnd->close();
@@ -618,7 +615,7 @@ void Game::ProcessEvent(Event& evt)
 					Nivel_1 = false;
 					Nivel_inicio = true;
 
-					AdmNiveles->BorrarNivel1(mov_p_forma, plataforma_estatica, *mundo, cajas, arr_gallardo, contador_ragdoll, puntajeNivel1);
+					AdmNiveles->BorrarNivel1(mov_p_forma, plataforma_estatica, *mundo, cajas, bala_Ragdoll, contador_ragdoll, puntajeNivel1);
 
 				}
 
@@ -632,10 +629,10 @@ void Game::ProcessEvent(Event& evt)
 				//destruyo todos los ragdols y reseteo el array para volver a disparar
 				for (int i = 0; i < 10; i++)
 				{
-					if (arr_gallardo[i] != NULL)
+					if (bala_Ragdoll[i] != NULL)
 					{
-						arr_gallardo[i]->sacar_cabeza(); //cambiar nombre
-						arr_gallardo[i] = NULL;
+						bala_Ragdoll[i]->destruir_Ragdoll(); //cambiar nombre
+						bala_Ragdoll[i] = NULL;
 					}
 				}
 
