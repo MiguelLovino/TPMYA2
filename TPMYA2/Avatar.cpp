@@ -1,11 +1,11 @@
 #include "Avatar.h"
 
 
-Avatar::Avatar(b2Body* cuerpo, RectangleShape* figura) : bod_avatar(cuerpo), rec_shape(figura)
+Avatar::Avatar(b2Body* cuerpo, RectangleShape* figura, float angulo) : bod_avatar(cuerpo), rec_shape(figura)
 {
 	//guardo la posicion del body en una variable para despues asignarsela al sprite
 	posicion = bod_avatar->GetPosition();
-
+	angulo = bod_avatar->GetAngle();
 	//dimenciones del body
 	b2AABB dimension;
 	dimension.upperBound = b2Vec2(-FLT_MAX, -FLT_MAX);
@@ -24,6 +24,7 @@ Avatar::Avatar(b2Body* cuerpo, RectangleShape* figura) : bod_avatar(cuerpo), rec
 
 	//asigo la posicion al sprite
 	rec_shape->setPosition(posicion.x, posicion.y);
+	rec_shape->setRotation(angulo);
 
 }
 /*

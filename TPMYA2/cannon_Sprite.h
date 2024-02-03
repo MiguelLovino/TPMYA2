@@ -16,13 +16,17 @@ private:
 	RectangleShape origenpoint;
 	int coordx = 75;
 	int coordy = 550;
+	Vector2i posInicial = Vector2i(75, 550);
+	Vector2i posNivel2 = Vector2i(350, 550);
 
 public:
-	cannon_Sprite();
+	cannon_Sprite(RenderWindow* ventana);
 	RectangleShape get_rect() { return origenpoint; }
 	Sprite get_sprite() { return *spr_canon; }
 	void dibujar(RenderWindow* ventana);
 	void actualizar(Vector2f mouse_m, RenderWindow* ventana, bool nivel1);
-	void Mover_cannon(int x, int y) { coordx = x; coordy = y; }
+	void Mover_cannon(RenderWindow* ventana, Vector2i pos);
+	Vector2i get_pos_Nivel1() { return posInicial; }
+	Vector2i get_pos_Nivel2() { return posNivel2; }
 };
 

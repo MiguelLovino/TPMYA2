@@ -21,18 +21,25 @@ class Game {
 private:
 	RenderWindow* pWnd;
 	void ProcessEvent(Event& evt);
-	void DrawGame();
+	
+	//Inicio de pantalla
 	void Nivel_inicial_dibujar();
-	void Nivel_1_dibujar();
-	void Nivel_2_dibujar();
-	void UpdateGame();
 	void Nivel_inicial_actualizar();
-	void Nivel_1_actualizar();
-	void Nivel_2_actualizar();
-	void ProcessCollisions();
 	void Nivel_inicial_colisiones();
+
+	//nivel 1
+	void Nivel_1_dibujar();
+	void Nivel_1_actualizar();
 	void Nivel_1_colisiones();
+	
+	//nivel 2
+	void Nivel_2_dibujar();
+	void Nivel_2_actualizar();
 	void Nivel_2_colisiones();
+	
+	void DrawGame();
+	void UpdateGame();
+	void ProcessCollisions();
 	Texture* tex_piso;
 	Texture* tex_pared;
 	Texture* text_cannon;
@@ -62,6 +69,9 @@ private:
 	//clase ragdoll
 	Ragdol* arr_gallardo[10];
 	int cant_arr_gallardo = 0;
+
+	//prueba de ragdoll
+	Ragdol* ragdolPrueba;
 
 	//clase cannon
 	Cannon* cannon_ragdoll;

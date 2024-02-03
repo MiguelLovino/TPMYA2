@@ -37,7 +37,7 @@ Pared_estatica::Pared_estatica(String textura, b2World *mundo, b2Vec2 pos, Vecto
 
 	//rec_pared->scale( / tex_pared->getSize().x, tam.y / tex_pared->getSize().y );
 	//avatar
-	pared_fija = new Avatar(bod_pared, rec_pared);
+	pared_fija = new Avatar(bod_pared, rec_pared,0);
 
 	
 }

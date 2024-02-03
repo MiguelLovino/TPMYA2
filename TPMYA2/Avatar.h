@@ -17,7 +17,7 @@ private:
 
 public:
 	
-	Avatar(b2Body* cuerpo, RectangleShape* figura);
+	Avatar(b2Body* cuerpo, RectangleShape* figura, float angulo);
 	//Avatar(b2Body* cuerpo, Sprite* figura, Texture* texfig);
 	float radianes_a_grados(float radianes);
 	void destruir_avatar(b2World* mundo);

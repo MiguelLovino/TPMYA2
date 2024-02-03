@@ -210,11 +210,12 @@ void Game::Nivel_1_actualizar()
 		AdmNiveles->BorrarNivel1(mov_p_forma, plataforma_estatica, *mundo, cajas, arr_gallardo, contador_ragdoll, puntajeNivel1);
 
 		//creo los objetos del nivel 2
-		AdmNiveles->CargarNivel2(plataforma_estatica, *mundo, cajas, *camara1, cannon2);
+		AdmNiveles->CargarNivel2(plataforma_estatica, *mundo, cajas, *camara1, cannon2,pWnd);
 	
 	}
 	}
 }
+
 void Game::Nivel_1_dibujar()
 {
 	/*********** Nivel 1 **********/
@@ -240,7 +241,8 @@ void Game::Nivel_1_dibujar()
 			
 			if (mov_p_forma[i] != NULL) mov_p_forma[i]->dibujar(pWnd);
 		}
-
+		//canon
+		cannon2->dibujar(pWnd);
 		//ragdols
 		for (int i = 0; i < 10; i++)
 		{
@@ -251,14 +253,16 @@ void Game::Nivel_1_dibujar()
 			}
 		}
 
+
 		//piso
 		for (int i = 0; i < 4; i++)
 		{
 			pisolino[i]->dibujar_ragdol(*pWnd);
 		}
 
-		//canon
-		cannon2->dibujar(pWnd);
+		
+
+		
 
 		//pisos estaticos flotantes
 		for (int i = 0; i < 4; i++)
@@ -326,6 +330,7 @@ void Game::Nivel_2_actualizar()
 		
 	}
 }
+
 void Game::Nivel_2_dibujar()
 {
 	/*********** Nivel 2 **********/
@@ -524,8 +529,9 @@ void Game::ProcessEvent(Event& evt)
 						float boca_y = cannon2->get_rect().getPosition().y + sin(angulo_cannon) * boca_cannon_distance;
 	
 						//aca debe de ir el resultado final de la operacion
-						arr_gallardo[i] = new Ragdol(mundo, {boca_x,boca_y}, grados_a_radiannes(cannon2->get_sprite().getRotation()+ 90));
-						arr_gallardo[i]->fuerza_disparo(potencia_cannon * 4, grados_a_radiannes(cannon2->get_sprite().getRotation()));
+						//grados_a_radiannes(cannon2->get_sprite().getRotation()+ 90)
+						arr_gallardo[i] = new Ragdol(mundo, {boca_x,boca_y}, grados_a_radiannes(cannon2->get_sprite().getRotation() + 90));
+						arr_gallardo[i]->fuerza_disparo(potencia_cannon * 4, grados_a_radiannes(cannon2->get_sprite().getRotation() ));
 					
 						tiempo2 = tiempo1;
 						contador_ragdoll--;
@@ -579,7 +585,10 @@ void Game::ProcessEvent(Event& evt)
 			//realizo el cambio de pantalla.
 			Nivel_inicio = false;
 			Nivel_1 = true;
-			//cout << "suelto jugar" << endl;
+			
+			//cargo el nivel 1
+			AdmNiveles->CargarNivel1(mov_p_forma, metaA, plataforma_estatica, *mundo, cajas, *camara1, cannon2);
+
 			mousePresionado = false;
 		}
 	}
@@ -604,12 +613,21 @@ void Game::ProcessEvent(Event& evt)
 			}
 			if (mousePresionado && evt.type == Event::MouseButtonReleased && evt.mouseButton.button == Mouse::Left)
 			{
-				//limpio la escena para volver a empezar
-				//destruir cajas
-				cajas[0]->reiniciar_pos();
-				cajas[1]->reiniciar_pos();
-				cajas[2]->reiniciar_pos();
-				cajas[3]->reiniciar_pos();
+				if (Nivel_1)
+				{
+					Nivel_1 = false;
+					Nivel_inicio = true;
+
+					AdmNiveles->BorrarNivel1(mov_p_forma, plataforma_estatica, *mundo, cajas, arr_gallardo, contador_ragdoll, puntajeNivel1);
+
+				}
+
+				if (Nivel_2)
+				{
+					AdmNiveles->BorrarNivel2(plataforma_estatica, *mundo,cajas,*camara1,cannon2, pWnd);
+					Nivel_2 = false;
+					Nivel_inicio = true;
+				}
 
 				//destruyo todos los ragdols y reseteo el array para volver a disparar
 				for (int i = 0; i < 10; i++)
@@ -625,7 +643,6 @@ void Game::ProcessEvent(Event& evt)
 				contador_ragdoll = 10;
 				puntajeNivel1 = 0;
 				mousePresionado = false;
-				//cout << " suelto el reset" << endl;
 			}
 		}
 		else
@@ -706,17 +723,16 @@ void Game::inicializar_objetos()
 	spr_menu->setPosition(spr_pos.x, spr_pos.y);
 	spr_menu->setScale(camara1->getSize().x / ventana_ancho, camara1->getSize().y / ventana_alto);
 	//inicializo objetos Nivel 1.
-	cannon2 = new cannon_Sprite;
+	cannon2 = new cannon_Sprite(pWnd);
 
 	reloj = new Clock;
 
 	for (int i = 0; i < 4; i++)
 	{
-		pisolino[i] = new Avatar(bod_piso[i], piso[i]);
+		pisolino[i] = new Avatar(bod_piso[i], piso[i],0);
 	}
 	
-	//cargo el nivel 1
-	AdmNiveles->CargarNivel1(mov_p_forma, metaA, plataforma_estatica, *mundo, cajas, *camara1, cannon2);
+	
 
 	//Menu pantalla inicial
 	font_menu = new Font;
@@ -750,7 +766,6 @@ void Game::inicializar_objetos()
 	inicializarTexto(Reiniciar, 35, Color::Black, Color::White, "Reiniciar", NULL);
 	texto_pos(Reiniciar,35, 170);
 
-	//transformo las cordenadas 
 }
 
 void Game::texto_pos(Text* texto, int x, int y)

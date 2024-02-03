@@ -1,6 +1,6 @@
 #include "cannon_Sprite.h"
 
-cannon_Sprite::cannon_Sprite()
+cannon_Sprite::cannon_Sprite(RenderWindow* ventana)
 {
 	spr_canon = new Sprite;
 	tex_canon = new Texture;
@@ -22,14 +22,14 @@ cannon_Sprite::cannon_Sprite()
 	spr_rueda->setScale(0.025, 0.025);
 	spr_rueda->setOrigin(spr_rueda->getTexture()->getSize().x / 2, spr_rueda->getTexture()->getSize().y / 2);
 
+	spr_canon->setPosition(ventana->mapPixelToCoords({ posInicial }));
+	spr_rueda->setPosition(ventana->mapPixelToCoords({ posInicial }));
+	origenpoint.setPosition(ventana->mapPixelToCoords({ posInicial }));
+
 }
 
 void cannon_Sprite::dibujar(RenderWindow* ventana)
 {
-	spr_canon->setPosition(ventana->mapPixelToCoords({ coordx, coordy }));
-	spr_rueda->setPosition(ventana->mapPixelToCoords({ coordx, coordy }));
-	origenpoint.setPosition(ventana->mapPixelToCoords({ coordx, coordy }));
-
 	ventana->draw(*spr_canon);
 	ventana->draw(*spr_rueda);
 	//ventana->draw(origenpoint);
@@ -57,4 +57,11 @@ void cannon_Sprite::actualizar(Vector2f mouse_m, RenderWindow* ventana,bool nive
 	//cout << angulo << endl;
 	spr_canon->setRotation(angulo);
 
+}
+
+void cannon_Sprite::Mover_cannon(RenderWindow* ventana, Vector2i pos)
+{
+	spr_canon->setPosition(ventana->mapPixelToCoords({ pos }));
+	spr_rueda->setPosition(ventana->mapPixelToCoords({ pos }));
+	origenpoint.setPosition(ventana->mapPixelToCoords({ pos	}));
 }

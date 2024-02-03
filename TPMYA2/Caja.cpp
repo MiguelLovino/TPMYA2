@@ -37,7 +37,7 @@ Caja::Caja(String textura, b2World* mundo, b2Vec2 pos, Vector2f tam, View* camar
 
 	//rec_pared->scale( / tex_pared->getSize().x, tam.y / tex_pared->getSize().y );
 	//avatar
-	caja_dinamica = new Avatar(bod_caja, rec_caja);
+	caja_dinamica = new Avatar(bod_caja, rec_caja,0);
 
 }
 

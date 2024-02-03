@@ -32,6 +32,7 @@ Ragdol::Ragdol(b2World* mundo, b2Vec2 m, float rot_cannon)
 
 	for (int i = 0; i < 6; i++)
 	{
+		boddef_ragdol[i].angle = 0.0f;
 		boddef_ragdol[i].type = b2_dynamicBody;
 		bod_ragdol[i] = mundo->CreateBody(&boddef_ragdol[i]);
 	}
@@ -79,11 +80,13 @@ Ragdol::Ragdol(b2World* mundo, b2Vec2 m, float rot_cannon)
 		joint_ragdolino[i] = (b2DistanceJoint*)mundo->CreateJoint(&joint_def_ragdolino[i]); //hay que castear
 	}
 
-	//
+	
+	//bod_ragdol[2]->SetTransform(bod_ragdol[2]->GetPosition(), rot_cannon);
+
 	for (int i = 0; i < 6; i++)
 	{
-		Ragdolino[i] = new Avatar(bod_ragdol[i], fig_ragdol[i]);
-		bod_ragdol[i]->SetTransform({ bod_ragdol[i]->GetPosition()}, rot_cannon);
+		
+		Ragdolino[i] = new Avatar(bod_ragdol[i], fig_ragdol[i], rot_cannon);
 	}
 }
 
@@ -119,3 +122,4 @@ void Ragdol::fuerza_disparo(float fuerza, float angulo)
 		
 	}
 }
+

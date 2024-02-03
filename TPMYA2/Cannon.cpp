@@ -25,7 +25,7 @@ Cannon::Cannon(b2World* mundo)
 
 	fix_cannon = bod_cannon->CreateFixture(&fixdef_cannon);
 
-	cannolino = new Avatar(bod_cannon, canno);
+	cannolino = new Avatar(bod_cannon, canno,0);
 	cannolino->set_texture(text_cannon);
 	
 	//cambio el centro de la masa

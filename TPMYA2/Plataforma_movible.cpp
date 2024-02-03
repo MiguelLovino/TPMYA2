@@ -32,7 +32,7 @@ Plataforma_movible::Plataforma_movible(b2World *mundo, float velo, b2Vec2 pos)
 		
 		//avatar
 
-		Plataforma_mov = new Avatar(bod_mov_plat, mov_plat);
+		Plataforma_mov = new Avatar(bod_mov_plat, mov_plat,0);
 
 }
 
