@@ -16,10 +16,21 @@ private:
 	SoundBuffer bufferpoint;
 	Sound soundpoint;
 
+	SoundBuffer buffergameover;
+	Sound soundgameover;
+
+	SoundBuffer bufferIntromenu;
+	Sound soundIntromenu;
+	bool activarIntroMenu = true;
+	
+
 public:
 	ADMSound();
 	void DisparoCanion();
 	void NavegarMenu();
 	void SumarPunto();
+	void GameOver();
+	void PlayIntroMenu();
+	void StopIntroMenu();
 };
 

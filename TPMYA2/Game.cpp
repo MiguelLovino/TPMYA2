@@ -55,6 +55,10 @@ void Game::Nivel_inicial_colisiones()
 {
 	if (Nivel_inicio) //logica para el boton de SALIR del menu NOTA: el boton de jugar se encuentra en la parte de Eventos.
 	{
+		//activo el sonido del menu
+		AdministradorSonido->PlayIntroMenu();
+		
+		
 		// si la mira, choca con el texto salir
 		if (puntero->get_sprite().getGlobalBounds().intersects(Salir->getGlobalBounds()))//true
 		{
@@ -276,6 +280,15 @@ void Game::Nivel_1_dibujar()
 		pWnd->draw(*Reiniciar);
 		pWnd->draw(*Salir);
 		pWnd->draw(*Perdiste);
+		if (!gameover)
+		{
+			gameover = true;
+			AdministradorSonido->GameOver();
+		}
+	}
+	else
+	{
+		gameover == false;
 	}
 
 	puntero->Dibujar(pWnd);
@@ -520,6 +533,9 @@ void Game::ProcessEvent(Event& evt)
 			//realizo el cambio de pantalla.
 			Nivel_inicio = false;
 			Nivel_1 = true;
+
+			//corto el sonido del menu
+			AdministradorSonido->StopIntroMenu();
 			
 			//cargo el nivel 1
 			AdmNiveles->CargarNivel1(mov_p_forma, metaA, plataforma_estatica, *mundo, cajas, cannon);
@@ -552,7 +568,7 @@ void Game::ProcessEvent(Event& evt)
 				{
 					Nivel_1 = false;
 					Nivel_inicio = true;
-
+					gameover = false;
 					AdmNiveles->BorrarNivel1(mov_p_forma, plataforma_estatica, *mundo, cajas, bala_Ragdoll, contador_ragdoll, puntajeNivel1);
 					
 				}

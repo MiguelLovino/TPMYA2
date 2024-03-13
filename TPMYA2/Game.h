@@ -105,6 +105,7 @@ private:
 	bool Nivel_1 = false;
 	bool Nivel_2 = false;
 	bool mousePresionado = false;
+	bool gameover = false;
 
 	//cargador de ragdolls
 	bool cargador_ragdol_vacio = false;
