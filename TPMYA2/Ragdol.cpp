@@ -17,10 +17,6 @@ Ragdol::Ragdol(b2World* mundo, b2Vec2 m, float rot_cannon)
 	fig_ragdol[4]->setFillColor(Color::Color(170, 50, 59));
 	fig_ragdol[5]->setFillColor(Color::Red);
 
-	//fisicas
-
-	//ragdoll
-
 	//posicion de los cuerpos del ragdol en el mundo
 							//referencia m.x = 50 my = 90
 	boddef_ragdol[0].position = b2Vec2(m.x, m.y + 0.1f); //cabeza 50 90.1

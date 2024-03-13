@@ -19,27 +19,15 @@ Game::Game(int ancho, int alto, string titulo)
 }
 void Game::UpdateGame() //actualizo los objetos
 {
-	
-
-	//la posicion del mouse en el mundo 
-	pixel_pos = Mouse::getPosition(*pWnd);
-	world_pos = pWnd->mapPixelToCoords(pixel_pos);
-
-	spr_mira->setPosition(pWnd->mapPixelToCoords(Mouse::getPosition(*pWnd)));
+	//actualizo mira
+	puntero->Actualizar(pWnd);
 
 	//actualizo el cannon
-	cannon2->actualizar(world_pos, pWnd,Nivel_1);
-
-	//actualizo la potencia del disparo del ragdol
-	float X1 = world_pos.x;
-	float Y1 = world_pos.y;
-	float X2 = cannon2->get_sprite().getPosition().x;
-	float Y2 = cannon2->get_sprite().getPosition().y;
-	//la potencia se calcula entre la pocicion del cannon y la mira.
-	potencia_cannon = sqrtl(pow(X1 - X2,2) + pow(Y1 - Y2,2));
+	cannon->actualizar(puntero->get_world_pos(), pWnd, Nivel_1);
 
 	//actualizo el tiempo
 	tiempo1 = reloj->getElapsedTime().asSeconds();
+
 	//actualizo el cargador.
 	actualizar_cargador_ragdoll();
 
@@ -48,13 +36,13 @@ void Game::UpdateGame() //actualizo los objetos
 	Nivel_2_actualizar();
 
 	// si disparo y tengo el cargador vacio, pierdo
-	if (contador_ragdoll == 0)
+	if (contador_ragdoll == -1)
 	{
-		cargador_ragdol_vacio = true;
+		//cargador_ragdol_vacio = true;
 	}
 	else
 	{
-		cargador_ragdol_vacio = false;
+		//cargador_ragdol_vacio = false;
 	}
 
 	tx_cargador->setString("Disparos restantes: " + to_string(contador_ragdoll));
@@ -65,10 +53,10 @@ void Game::UpdateGame() //actualizo los objetos
 
 void Game::Nivel_inicial_colisiones()
 {
-	if (Nivel_inicio)
+	if (Nivel_inicio) //logica para el boton de SALIR del menu NOTA: el boton de jugar se encuentra en la parte de Eventos.
 	{
 		// si la mira, choca con el texto salir
-		if (spr_mira->getGlobalBounds().intersects(Salir->getGlobalBounds()))//true
+		if (puntero->get_sprite().getGlobalBounds().intersects(Salir->getGlobalBounds()))//true
 		{
 			if (salirSelec)
 			{
@@ -102,11 +90,11 @@ void Game::Nivel_inicial_actualizar()
 	//actualizo el estadao del cargador
 	if (cargador_ragdol_vacio <= 0)
 	{
-		cargador_ragdol_vacio = true;
+		//cargador_ragdol_vacio = true;
 	}
 	else
 	{
-		cargador_ragdol_vacio = false;
+		//cargador_ragdol_vacio = false;
 	}
 	tx_objetivo->setString("Cajas en zona: " + to_string(puntajeNivel1));
 }
@@ -119,7 +107,7 @@ void Game::Nivel_inicial_dibujar()
 		pWnd->draw(*spr_menu);
 		pWnd->draw(*jugar);
 		pWnd->draw(*Salir);
-		pWnd->draw(*spr_mira);
+		puntero->Dibujar(pWnd);
 	}
 }
 
@@ -130,7 +118,7 @@ void Game::Nivel_1_colisiones()
 		//controlo la colicion de las plataformas en movimiento con el piso
 		for (int i = 0; i < 3; i++)
 		{
-			if (mov_p_forma[i] != NULL) mov_p_forma[i]->colicion(piso);
+			//if (mov_p_forma[i] != NULL) mov_p_forma[i]->colicion(piso);
 		}
 
 		}
@@ -153,10 +141,7 @@ void Game::Nivel_1_actualizar()
 			}
 		}
 	}
-	for (int i = 0; i < 4; i++)
-	{
-		pisolino[i]->actualizar_ragdol();
-	}
+
 
 	//mejorar
 	if(mov_p_forma[0] != NULL) mov_p_forma[0]->actualizar(102, 80);
@@ -211,8 +196,9 @@ void Game::Nivel_1_actualizar()
 		AdmNiveles->BorrarNivel1(mov_p_forma, plataforma_estatica, *mundo, cajas, bala_Ragdoll, contador_ragdoll, puntajeNivel1);
 
 		//creo los objetos del nivel 2
-		AdmNiveles->CargarNivel2(plataforma_estatica, *mundo, cajas, *camara1, cannon2,pWnd);
-	
+		AdmNiveles->CargarNivel2(plataforma_estatica, *mundo, cajas, cannon,pWnd,heliGiratoria);
+		
+		heliGiratoria = new Helice(mundo, { 49,93 });
 	}
 	}
 }
@@ -224,6 +210,9 @@ void Game::Nivel_1_dibujar()
 	{
 		//fondo de la pantalla.
 		pWnd->draw(*spr_fondo);
+
+		//borde de pantalla
+		bordePantalla->Dibujar(pWnd);
 
 		//zona meta
 		if (metaA != NULL)
@@ -254,13 +243,10 @@ void Game::Nivel_1_dibujar()
 		}
 
 		//canon
-		cannon2->dibujar(pWnd);
+		cannon->dibujar(pWnd);
 
 		//piso
-		for (int i = 0; i < 4; i++)
-		{
-			pisolino[i]->dibujar_ragdol(*pWnd);
-		}
+		
 
 		//pisos estaticos flotantes
 		for (int i = 0; i < 4; i++)
@@ -276,6 +262,7 @@ void Game::Nivel_1_dibujar()
 				cajas[i]->Dibujar(pWnd);
 			}
 		}
+		
 		//cargador
 		pWnd->draw(*tx_cargador);
 		//objetivo
@@ -291,7 +278,7 @@ void Game::Nivel_1_dibujar()
 		pWnd->draw(*Perdiste);
 	}
 
-	pWnd->draw(*spr_mira);
+	puntero->Dibujar(pWnd);
 }
 
 void Game::Nivel_2_colisiones()
@@ -337,8 +324,8 @@ void Game::Nivel_2_dibujar()
 		pWnd->draw(*spr_fondo);
  
 		
-
-		for(int i = 0; i < 4; i++) pWnd->draw(*piso[i]);
+		//borde de pantalla
+		bordePantalla->Dibujar(pWnd);
 
 		//ragdols
 		for (int i = 0; i < 10; i++)
@@ -366,12 +353,22 @@ void Game::Nivel_2_dibujar()
 				cajas[i]->Dibujar(pWnd);
 			}
 		}
+
+		if (heliGiratoria != NULL)
+		{
+			heliGiratoria->Dibujar(pWnd);
+		}
+		else
+		{
+			cout << "no se dibuja la helice" << endl;
+		}
+
 		//dibujo el contador
 		pWnd->draw(*tx_objetivo);
 		//dibujar cargador
 		pWnd->draw(*tx_cargador);
 		//canon
-		cannon2->dibujar(pWnd);
+		cannon->dibujar(pWnd);
 
 		if (cargador_ragdol_vacio == true)
 		{
@@ -380,7 +377,7 @@ void Game::Nivel_2_dibujar()
 			pWnd->draw(*Salir);
 			pWnd->draw(*Perdiste);
 		}
-		pWnd->draw(*spr_mira);
+		puntero->Dibujar(pWnd);
 	}
 }
 
@@ -401,20 +398,6 @@ void Game::ProcessCollisions()
 
 void Game::cargar_imagenes()
 {
-	tex_piso = new Texture;
-	tex_piso->loadFromFile("recursos/pared2.png");
-	tex_pared = new Texture;
-	tex_pared->loadFromFile("recursos/pared3.png");
-	
-	//imagen del piso
-		piso[0] = new RectangleShape;
-		piso[0]->setTexture(tex_piso);
-		piso[1] = new RectangleShape;
-		piso[1]->setTexture(tex_piso);
-		piso[2] = new RectangleShape;
-		piso[2]->setTexture(tex_pared);
-		piso[3] = new RectangleShape;
-		piso[3]->setTexture(tex_pared);
 
 	//imagen del fondo
 	tex_fondo = new Texture;
@@ -442,55 +425,6 @@ void Game::iniciar_fisica()
 	mundo = new b2World(b2Vec2(0,gravedad));
 
 	/*****************************/
-
-	//definicion_body (piso)
-	for (int i = 0; i < 4; i++)
-	{
-		boddef_piso[i].type = b2_staticBody; //def
-	}
-	boddef_piso[0].position = b2Vec2(50.f, 76.f); //def techo
-	boddef_piso[1].position = b2Vec2(50.f, 106.f); //def suelo
-
-	boddef_piso[2].position = b2Vec2(66.f, 91.f); //def pared derecha 
-	boddef_piso[3].position = b2Vec2(36.f, 91.f); //def pared izquierda
-
-	//body del piso en el mundo
-	for (int i = 0; i < 4; i++)
-	{
-		bod_piso[i] = mundo->CreateBody(&boddef_piso[i]); // linkeo el body a su definicion creada por el mundo
-	}
-
-	//creo una shape para asignar al fixture
-	b2PolygonShape shape_piso; //techo
-	shape_piso.SetAsBox(15.f, 1.f); // tiene que ser la mitad de la caja (en x, y)
-
-	b2PolygonShape shape_pared;
-	shape_pared.SetAsBox(1.f, 15.f);
-
-	 //definicion fixture piso
-	for (int i = 0; i < 2; i++)
-	{
-		fixdef_piso[i].shape = &shape_piso;
-	}
-
-	//definicion fixture piso
-	for (int i = 2; i < 4; i++)
-	{
-		fixdef_piso[i].shape = &shape_pared;
-	}
-
-	for (int i = 0; i < 4; i++)
-	{
-		fixdef_piso[i].density = 0.1f; // densidad = masa / volumen
-		fixdef_piso[i].friction = 0.3f;
-		fixdef_piso[i].restitution = 0.1f; //rebote (1.0 = infinito el rebote)
-	}
-	//fix
-	for (int i = 0; i < 4; i++)
-	{
-		fix_piso[i] = bod_piso[i]->CreateFixture(&fixdef_piso[i]); //uno las propiedades fisicas al body.
-	}
-
 }
 
 void Game::ProcessEvent(Event& evt)
@@ -517,19 +451,19 @@ void Game::ProcessEvent(Event& evt)
 					{
 						//alinear la punta del canon con la salida del ragdol
 						// convertir grados a radianes
-						float angulo_cannon = grados_a_radiannes(cannon2->get_sprite().getRotation());
+						float angulo_cannon = grados_a_radiannes(cannon->get_sprite().getRotation());
 
 						// 2 calcular la distancia
 						float boca_cannon_distance = 4;
 
 						//3 calculo la nueva pocision
-						float boca_x = cannon2->get_rect().getPosition().x + cos(angulo_cannon) * boca_cannon_distance;
-						float boca_y = cannon2->get_rect().getPosition().y + sin(angulo_cannon) * boca_cannon_distance;
+						float boca_x = cannon->get_rect().getPosition().x + cos(angulo_cannon) * boca_cannon_distance;
+						float boca_y = cannon->get_rect().getPosition().y + sin(angulo_cannon) * boca_cannon_distance;
 	
 						//aca debe de ir el resultado final de la operacion
-						//grados_a_radiannes(cannon2->get_sprite().getRotation()+ 90)
-						bala_Ragdoll[i] = new Ragdol(mundo, {boca_x,boca_y}, grados_a_radiannes(cannon2->get_sprite().getRotation() + 90));
-						bala_Ragdoll[i]->fuerza_disparo(potencia_cannon * 4, grados_a_radiannes(cannon2->get_sprite().getRotation() ));
+						
+						bala_Ragdoll[i] = new Ragdol(mundo, {boca_x,boca_y},0);
+						bala_Ragdoll[i]->fuerza_disparo( cannon->get_potencia_cannon() * 4, grados_a_radiannes(cannon->get_sprite().getRotation() ));
 					
 						tiempo2 = tiempo1;
 						contador_ragdoll--;
@@ -543,6 +477,10 @@ void Game::ProcessEvent(Event& evt)
 			}
 		}
 		
+		if (cargador_ragdol_vacio == false && mousePresionado && evt.type == Event::MouseButtonReleased && evt.mouseButton.button == Mouse::Left && contador_ragdoll == 0)
+		{
+			cargador_ragdol_vacio = true;
+		}
 	}
 
 	switch (evt.type)
@@ -567,7 +505,7 @@ void Game::ProcessEvent(Event& evt)
 
 	//si hago click en jugar, avanzo a nivel 1, si hago click en salir, salgo del juego
 	//checkeo la colicion de los sprite
-	if (Nivel_inicio && spr_mira->getGlobalBounds().intersects(jugar->getGlobalBounds()))
+	if (Nivel_inicio && puntero->get_sprite().getGlobalBounds().intersects(jugar->getGlobalBounds()))
 	{
 		if (jugarSelec)
 		{
@@ -584,7 +522,7 @@ void Game::ProcessEvent(Event& evt)
 			Nivel_1 = true;
 			
 			//cargo el nivel 1
-			AdmNiveles->CargarNivel1(mov_p_forma, metaA, plataforma_estatica, *mundo, cajas, *camara1, cannon2);
+			AdmNiveles->CargarNivel1(mov_p_forma, metaA, plataforma_estatica, *mundo, cajas, cannon);
 
 			mousePresionado = false;
 		}
@@ -600,7 +538,7 @@ void Game::ProcessEvent(Event& evt)
 	if (cargador_ragdol_vacio == true)
 	{
 		//si hago click en reiniciar, reseteo el nivel, si hago click en salir, salgo del juego
-		if (spr_mira->getGlobalBounds().intersects(Reiniciar->getGlobalBounds()))
+		if (puntero->get_sprite().getGlobalBounds().intersects(Reiniciar->getGlobalBounds()))
 		{
 			if (reiniciarSelec)
 			{
@@ -616,14 +554,15 @@ void Game::ProcessEvent(Event& evt)
 					Nivel_inicio = true;
 
 					AdmNiveles->BorrarNivel1(mov_p_forma, plataforma_estatica, *mundo, cajas, bala_Ragdoll, contador_ragdoll, puntajeNivel1);
-
+					
 				}
 
 				if (Nivel_2)
 				{
-					AdmNiveles->BorrarNivel2(plataforma_estatica, *mundo,cajas,*camara1,cannon2, pWnd);
+					AdmNiveles->BorrarNivel2(plataforma_estatica, *mundo,cajas,cannon, pWnd);
 					Nivel_2 = false;
 					Nivel_inicio = true;
+				
 				}
 
 				//destruyo todos los ragdols y reseteo el array para volver a disparar
@@ -640,6 +579,7 @@ void Game::ProcessEvent(Event& evt)
 				contador_ragdoll = 10;
 				puntajeNivel1 = 0;
 				mousePresionado = false;
+				cargador_ragdol_vacio = false;
 			}
 		}
 		else
@@ -648,7 +588,7 @@ void Game::ProcessEvent(Event& evt)
 			reiniciarSelec = true;
 		}
 
-		if (spr_mira->getGlobalBounds().intersects(Salir->getGlobalBounds()))
+		if (puntero->get_sprite().getGlobalBounds().intersects(Salir->getGlobalBounds()))
 		{
 			if (salirSelec)
 			{
@@ -666,6 +606,7 @@ void Game::ProcessEvent(Event& evt)
 			Salir->setOutlineThickness(0);
 			salirSelec = true;
 		}
+		
 	}
 
 
@@ -706,42 +647,40 @@ void Game::inicializar_objetos()
 	AdmNiveles = new Niveles;
 
 	//inicializo objetos generales
-		/*MIRA*/
-	txt_mira = new Texture;
-	txt_mira->loadFromFile("recursos/mira.png");
-	spr_mira = new Sprite(*txt_mira);
-	spr_mira->setOrigin(spr_mira->getGlobalBounds().width / 2, spr_mira->getGlobalBounds().height / 2);
-	spr_mira->setScale(camara1->getSize().x / ventana_ancho, camara1->getSize().y / ventana_alto);
+	
+	//borde de pantalla
+	bordePantalla = new BordePantalla(mundo);
 
+	
+
+	// mira
+	puntero = new Mira(camara1, ventana_ancho, ventana_alto);
+	
+
+	//menu
 	txt_menu = new Texture;
 	txt_menu->loadFromFile("recursos/papiro2.png");
 	spr_menu = new Sprite(*txt_menu);
-	Vector2f spr_pos = pWnd->mapPixelToCoords({ 10, 120});
+	Vector2f spr_pos = pWnd->mapPixelToCoords({ 10, 120 });
 	spr_menu->setPosition(spr_pos.x, spr_pos.y);
 	spr_menu->setScale(camara1->getSize().x / ventana_ancho, camara1->getSize().y / ventana_alto);
+
 	//inicializo objetos Nivel 1.
-	cannon2 = new cannon_Sprite(pWnd);
+	cannon = new cannon_Sprite(pWnd);
 
 	reloj = new Clock;
-
-	for (int i = 0; i < 4; i++)
-	{
-		pisolino[i] = new Avatar(bod_piso[i], piso[i],0);
-	}
 	
-	
-
 	//Menu pantalla inicial
 	font_menu = new Font;
 	font_menu->loadFromFile("recursos/letra.ttf");
 
 	jugar = new Text;
 	inicializarTexto(jugar, 35, Color::Red, Color::White, "Jugar", NULL);
-	texto_pos(jugar, 35, 170);
+	texto_pos(jugar, 60, 170);
 	
 	Salir = new Text;
 	inicializarTexto(Salir, 35, Color::Red, Color::White, "Salir", NULL);
-	texto_pos(Salir, 35, 250);
+	texto_pos(Salir, 60, 250);
 
 	//texto del cargador de ragdols
 	tx_cargador = new Text;
@@ -819,7 +758,7 @@ void Game::actualizar_cargador_ragdoll()
 {
 	if (contador_ragdoll >= 10)
 	{
-		cargador_ragdol_vacio = true;
+		//cargador_ragdol_vacio = true;
 	}
 
 }

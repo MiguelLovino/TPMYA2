@@ -17,7 +17,8 @@ private:
 	int coordx = 75;
 	int coordy = 550;
 	Vector2i posInicial = Vector2i(75, 550);
-	Vector2i posNivel2 = Vector2i(350, 550);
+	Vector2i posNivel2 = Vector2i(75, 550);
+	int potencia_cannon = 0;
 
 public:
 	cannon_Sprite(RenderWindow* ventana);
@@ -28,5 +29,6 @@ public:
 	void Mover_cannon(RenderWindow* ventana, Vector2i pos);
 	Vector2i get_pos_Nivel1() { return posInicial; }
 	Vector2i get_pos_Nivel2() { return posNivel2; }
+	int get_potencia_cannon() { return potencia_cannon; }
 };
 

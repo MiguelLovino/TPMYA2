@@ -13,6 +13,9 @@
 #include "ZonaGanar.h"
 #include "Niveles.h"
 #include "ADMSound.h"
+#include "Mira.h"
+#include "BordePantalla.h"
+#include "Helice.h"
 
 using namespace sf;
 using namespace std;
@@ -39,8 +42,7 @@ private:
 	void DrawGame();
 	void UpdateGame();
 	void ProcessCollisions();
-	Texture* tex_piso;
-	Texture* tex_pared;
+	
 	Texture* text_cannon;
 	Sprite* spr_fondo;
 	Texture* tex_fondo;
@@ -52,22 +54,10 @@ private:
 	//niveles
 	Niveles* AdmNiveles;
 
-	//********borde de la pantalla*********//
-
-	//en el refactor, hacer una clase.
-
-	RectangleShape* piso[4];
-	b2Vec2 piso_posicion[4];
-
-	b2Body* bod_piso[4];
-	b2BodyDef boddef_piso[4]; //no puede ser puntero
-	b2Fixture* fix_piso[4];
-	b2FixtureDef fixdef_piso[4]; //no puede ser puntero
-
-	Avatar* pisolino[4];
-
-	//*************************************//
 	float fps, tiempoFrame;
+
+	//calse mira (puntero del mouse)
+	Mira* puntero;
 
 	//clase ragdoll
 	Ragdol* bala_Ragdoll[10];
@@ -76,8 +66,12 @@ private:
 	//prueba de ragdoll
 	Ragdol* ragdolPrueba;
 
+
+	//borde de pantalla
+	BordePantalla* bordePantalla;
+	
 	//clase cannon sprite
-	cannon_Sprite* cannon2;
+	cannon_Sprite* cannon;
 
 	//clase plataformas movibles verticales
 	Plataforma_movible* mov_p_forma[3];
@@ -98,6 +92,10 @@ private:
 
 	//cajas dinamicas
 	Caja* cajas[4];
+
+	//heliceGiratoria
+	Helice* heliGiratoria;
+	
 
 	//zona de ganar
 	ZonaGanar* metaA;
@@ -123,8 +121,7 @@ private:
 	Text* Reiniciar;
 	Text* Perdiste;
 	Text* Ganaste;
-	Sprite* spr_mira;
-	Texture* txt_mira;
+
 	Sprite* spr_menu;
 	Texture* txt_menu;
 

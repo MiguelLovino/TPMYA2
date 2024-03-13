@@ -132,9 +132,12 @@
   <ItemGroup>
     <ClInclude Include="ADMSound.h" />
     <ClInclude Include="Avatar.h" />
+    <ClInclude Include="BordePantalla.h" />
     <ClInclude Include="Caja.h" />
     <ClInclude Include="cannon_Sprite.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Helice.h" />
+    <ClInclude Include="Mira.h" />
     <ClInclude Include="Niveles.h" />
     <ClInclude Include="Pared_estatica.h" />
     <ClInclude Include="Plataforma_movible.h" />
@@ -144,10 +147,13 @@
   <ItemGroup>
     <ClCompile Include="ADMSound.cpp" />
     <ClCompile Include="Avatar.cpp" />
+    <ClCompile Include="BordePantalla.cpp" />
     <ClCompile Include="Caja.cpp" />
     <ClCompile Include="cannon_Sprite.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Helice.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Mira.cpp" />
     <ClCompile Include="Niveles.cpp" />
     <ClCompile Include="Pared_estatica.cpp" />
     <ClCompile Include="Plataforma_movible.cpp" />

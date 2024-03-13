@@ -11,6 +11,7 @@
 #include "Pared_estatica.h"
 #include "Caja.h"
 #include "ZonaGanar.h"
+#include "Helice.h"
 
 class Niveles
 {
@@ -30,10 +31,10 @@ private:
 public:
 	Niveles();
 
-	void CargarNivel1(Plataforma_movible* mov_p_forma[], ZonaGanar* &metaA, Pared_estatica* plataforma_estatica[], b2World& mundo, Caja* cajas[], View& camara1, cannon_Sprite* cannon2);
+	void CargarNivel1(Plataforma_movible* mov_p_forma[], ZonaGanar* &metaA, Pared_estatica* plataforma_estatica[], b2World& mundo, Caja* cajas[], cannon_Sprite* cannon2);
 	void BorrarNivel1(Plataforma_movible* mov_p_forma[], Pared_estatica* plataforma_estatica[], b2World &mundo, Caja* cajas[], Ragdol* arr_gallardo[], int &contador_ragdoll, int& contador_objetivo);
-	void CargarNivel2(Pared_estatica* plataforma_estatica[], b2World& mundo, Caja* cajas[], View &camara1, cannon_Sprite* cannon2, RenderWindow* ventana);
-	void BorrarNivel2(Pared_estatica* plataforma_estatica[], b2World& mundo, Caja* cajas[], View& camara1, cannon_Sprite* cannon2, RenderWindow* ventana);
+	void CargarNivel2(Pared_estatica* plataforma_estatica[], b2World& mundo, Caja* cajas[], cannon_Sprite* cannon2, RenderWindow* ventana, Helice *geliGiratoria);
+	void BorrarNivel2(Pared_estatica* plataforma_estatica[], b2World& mundo, Caja* cajas[], cannon_Sprite* cannon2, RenderWindow* ventana);
 
 	//geter y seter de los puntajes
 	//n1

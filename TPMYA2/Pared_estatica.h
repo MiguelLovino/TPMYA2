@@ -25,7 +25,7 @@ private:
 
 public:
 	//@brief Url text, mundo, pos en mundo, tamaño.
-	Pared_estatica(String textura,b2World* mundo, b2Vec2 pos, Vector2f tam, View* camara1);
+	Pared_estatica(String textura,b2World* mundo, b2Vec2 pos, Vector2f tam);
 	void rotar(float grado);
 	void Dibujar(RenderWindow *ventana);
 	void Destruir(b2World* mundo);

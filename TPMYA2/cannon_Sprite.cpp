@@ -57,6 +57,16 @@ void cannon_Sprite::actualizar(Vector2f mouse_m, RenderWindow* ventana,bool nive
 	//cout << angulo << endl;
 	spr_canon->setRotation(angulo);
 
+	//en cada actualizacion, calculo la potencia de disparo del cannon
+
+	//actualizo la potencia del disparo del ragdol
+	float X1 = mouse_m.x;
+	float Y1 = mouse_m.y;
+	float X2 = spr_canon->getPosition().x;
+	float Y2 = spr_canon->getPosition().y;
+	//la potencia se calcula entre la pocicion del cannon y la mira.
+	potencia_cannon = sqrtl(pow(X1 - X2, 2) + pow(Y1 - Y2, 2));
+
 }
 
 void cannon_Sprite::Mover_cannon(RenderWindow* ventana, Vector2i pos)

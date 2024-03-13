@@ -1,6 +1,6 @@
 #include "Pared_estatica.h"
 
-Pared_estatica::Pared_estatica(String textura, b2World *mundo, b2Vec2 pos, Vector2f tam, View *camara1)
+Pared_estatica::Pared_estatica(String textura, b2World *mundo, b2Vec2 pos, Vector2f tam)
 {
 	//type
 	boddef_pared.type = b2_staticBody;

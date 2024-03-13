@@ -20,7 +20,7 @@ private:
 
 	Avatar* caja_dinamica;
 public:
-	Caja(String textura, b2World* mundo, b2Vec2 pos, Vector2f tam, View* camara1);
+	Caja(String textura, b2World* mundo, b2Vec2 pos, Vector2f tam);
 	void Dibujar(RenderWindow* ventana);
 	void Actualizar();
 	RectangleShape get_rect() { return *rec_caja; }
