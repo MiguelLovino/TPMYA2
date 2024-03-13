@@ -109,7 +109,23 @@ void Helice::Actualizar()
 	if (bod_helice[0]->GetPosition().x > 58) vel *= -1;
 	if (bod_helice[0]->GetPosition().x < 40) vel *= -1;
 	
-	cout << bod_helice[0]->GetPosition().x << endl;
+	//cout << bod_helice[0]->GetPosition().x << endl;
+}
+
+void Helice::Destruir()
+{
+	for (int i = 0; i < 2; i++)
+	{
+		bod_helice[i]->GetWorld()->DestroyBody(bod_helice[i]);
+		bod_helice[i] = NULL;
+		if (bod_helice[i] == NULL)
+		{
+			cout << "el cuerpo de la helice: " + i << " se destruyo" << endl;
+		}
+	}
+
+	
+
 }
 
 

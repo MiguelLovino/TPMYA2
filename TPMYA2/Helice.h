@@ -34,5 +34,6 @@ public:
 	void Dibujar(RenderWindow* ventana);
 	Avatar get_avatar(int i) { return *Av_heleice[i]; }
 	void Actualizar();
+	void Destruir();
 };
 

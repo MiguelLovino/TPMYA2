@@ -94,7 +94,7 @@ private:
 	Caja* cajas[4];
 
 	//heliceGiratoria
-	Helice* heliGiratoria;
+	Helice* heliGiratoria[1];
 	
 
 	//zona de ganar

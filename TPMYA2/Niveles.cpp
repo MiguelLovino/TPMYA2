@@ -82,7 +82,7 @@ void Niveles::BorrarNivel1(Plataforma_movible *mov_p_forma[],Pared_estatica* pla
 	contador_objetivo = 0;
 }
 
-void Niveles::CargarNivel2(Pared_estatica* plataforma_estatica[], b2World& mundo, Caja* cajas[], cannon_Sprite* cannon2, RenderWindow *ventana, Helice *geliGiratoria)
+void Niveles::CargarNivel2(Pared_estatica* plataforma_estatica[], b2World& mundo, Caja* cajas[], cannon_Sprite* cannon2, RenderWindow *ventana, Helice *geliGiratoria[])
 {
 	cajas[0] = new Caja("recursos/caja.jpg", &mundo, { 60, 83 }, { 0.70, 0.75 });//derecha
 	plataforma_estatica[0] = new Pared_estatica("recursos/matlib.jpg", &mundo, { 60, 84.0 }, { 1,	0.75f });
@@ -104,10 +104,10 @@ void Niveles::CargarNivel2(Pared_estatica* plataforma_estatica[], b2World& mundo
 
 	//cargar helice en esta parte.
 
-	//geliGiratoria = new Helice(&mundo, { 49,93 });
+	geliGiratoria[0] = new Helice(&mundo, {49,93});
 }
 
-void Niveles::BorrarNivel2(Pared_estatica* plataforma_estatica[], b2World& mundo, Caja* cajas[], cannon_Sprite* cannon2, RenderWindow* ventana)
+void Niveles::BorrarNivel2(Pared_estatica* plataforma_estatica[], b2World& mundo, Caja* cajas[], cannon_Sprite* cannon2, RenderWindow* ventana, Helice* heliceGiratoria[])
 {
 	//destruir cajas
 	for (int i = 0; i < 4; i++)
@@ -128,6 +128,10 @@ void Niveles::BorrarNivel2(Pared_estatica* plataforma_estatica[], b2World& mundo
 			plataforma_estatica[i] = NULL;
 		}
 	}
+
+	//destruyo la helice
+	heliceGiratoria[0]->Destruir();
+
 	cannon2->Mover_cannon(ventana, cannon2->get_pos_Nivel1());
 }
 

@@ -35,16 +35,7 @@ void Game::UpdateGame() //actualizo los objetos
 	Nivel_1_actualizar();
 	Nivel_2_actualizar();
 
-	// si disparo y tengo el cargador vacio, pierdo
-	if (contador_ragdoll == -1)
-	{
-		//cargador_ragdol_vacio = true;
-	}
-	else
-	{
-		//cargador_ragdol_vacio = false;
-	}
-
+	//actualizacion del texto del cargador.
 	tx_cargador->setString("Disparos restantes: " + to_string(contador_ragdoll));
 
 	
@@ -202,7 +193,7 @@ void Game::Nivel_1_actualizar()
 		//creo los objetos del nivel 2
 		AdmNiveles->CargarNivel2(plataforma_estatica, *mundo, cajas, cannon,pWnd,heliGiratoria);
 		
-		heliGiratoria = new Helice(mundo, { 49,93 });
+		
 	}
 	}
 }
@@ -286,10 +277,6 @@ void Game::Nivel_1_dibujar()
 			AdministradorSonido->GameOver();
 		}
 	}
-	else
-	{
-		gameover == false;
-	}
 
 	puntero->Dibujar(pWnd);
 }
@@ -369,7 +356,7 @@ void Game::Nivel_2_dibujar()
 
 		if (heliGiratoria != NULL)
 		{
-			heliGiratoria->Dibujar(pWnd);
+			heliGiratoria[0]->Dibujar(pWnd);
 		}
 		else
 		{
@@ -514,6 +501,11 @@ void Game::ProcessEvent(Event& evt)
 			{
 				puntajeNivel1++;
 			}
+			if (evt.key.code == Keyboard::Num2)
+			{
+				cargador_ragdol_vacio = true;
+			}
+
 	}
 
 	//si hago click en jugar, avanzo a nivel 1, si hago click en salir, salgo del juego
@@ -575,10 +567,10 @@ void Game::ProcessEvent(Event& evt)
 
 				if (Nivel_2)
 				{
-					AdmNiveles->BorrarNivel2(plataforma_estatica, *mundo,cajas,cannon, pWnd);
+					AdmNiveles->BorrarNivel2(plataforma_estatica, *mundo,cajas,cannon, pWnd, heliGiratoria);
 					Nivel_2 = false;
 					Nivel_inicio = true;
-				
+					gameover = false;
 				}
 
 				//destruyo todos los ragdols y reseteo el array para volver a disparar
