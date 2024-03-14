@@ -27,7 +27,7 @@ private:
 	b2DistanceJointDef def_join_heli;
 
 	Avatar* Av_heleice[2];
-	float vel = 0.1;
+	float vel = 0.1f;
 
 public:
 	Helice(b2World* mundo, b2Vec2 m);
@@ -35,5 +35,7 @@ public:
 	Avatar get_avatar(int i) { return *Av_heleice[i]; }
 	void Actualizar();
 	void Destruir();
+	void MovimientoHorizontal();
+	void MovimientoVertical();
 };
 

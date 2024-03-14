@@ -104,7 +104,8 @@ void Niveles::CargarNivel2(Pared_estatica* plataforma_estatica[], b2World& mundo
 
 	//cargar helice en esta parte.
 
-	geliGiratoria[0] = new Helice(&mundo, {49,93});
+	geliGiratoria[0] = new Helice(&mundo, {43,93});
+	geliGiratoria[1] = new Helice(&mundo, { 56,101 });
 }
 
 void Niveles::BorrarNivel2(Pared_estatica* plataforma_estatica[], b2World& mundo, Caja* cajas[], cannon_Sprite* cannon2, RenderWindow* ventana, Helice* heliceGiratoria[])
@@ -130,7 +131,10 @@ void Niveles::BorrarNivel2(Pared_estatica* plataforma_estatica[], b2World& mundo
 	}
 
 	//destruyo la helice
-	heliceGiratoria[0]->Destruir();
+	for (size_t i = 0; i < 2; i++)
+	{
+		heliceGiratoria[i]->Destruir();
+	}
 
 	cannon2->Mover_cannon(ventana, cannon2->get_pos_Nivel1());
 }

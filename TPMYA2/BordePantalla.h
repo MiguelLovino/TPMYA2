@@ -28,6 +28,6 @@ private:
 public:
 	BordePantalla(b2World* mundo);
 	void Dibujar(RenderWindow* ventana);
-	//b2Body get_body(int num) { return *bod_piso[num]; }
+	RectangleShape get_rect(int num) { return *piso[num]; }
 };
 

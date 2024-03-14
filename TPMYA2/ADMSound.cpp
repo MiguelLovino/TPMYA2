@@ -28,6 +28,10 @@ ADMSound::ADMSound()
 	soundIntromenu.setLoop(true);
 	soundIntromenu.setVolume(25);
 
+	//cleastage
+	bufferClearStage.loadFromFile("recursos/Audio/clearStage.wav");
+	soundClearStage.setBuffer(bufferClearStage);
+
 }
 
 void ADMSound::DisparoCanion()
@@ -67,4 +71,9 @@ void ADMSound::StopIntroMenu()
 	soundIntromenu.setLoop(false);
 	soundIntromenu.stop();
 	activarIntroMenu = true;
+}
+
+void ADMSound::ClearStage()
+{
+	soundClearStage.play();
 }

@@ -110,13 +110,9 @@ void Game::Nivel_1_colisiones()
 {
 	if (Nivel_1)
 	{
-		//controlo la colicion de las plataformas en movimiento con el piso
-		for (int i = 0; i < 3; i++)
-		{
-			//if (mov_p_forma[i] != NULL) mov_p_forma[i]->colicion(piso);
-		}
+		
 
-		}
+	}
 	
 }
 void Game::Nivel_1_actualizar()
@@ -181,8 +177,10 @@ void Game::Nivel_1_actualizar()
 	}
 	/***************************PASAR DE NIVEL*******************************************/
 	//si almenos 3 cajas se encuentran en la zona de meta, se pasa de pantalla
-	if (puntajeNivel1 == 3)
+	if (puntajeNivel1 >= 3)
 	{	
+		//sonido de pasar nivel.
+		AdministradorSonido->ClearStage();
 		//activo y desactivo las banderas correspondientes.
 		Nivel_1 = false;
 		Nivel_2 = true;
@@ -285,14 +283,34 @@ void Game::Nivel_2_colisiones()
 {
 	if (Nivel_2)
 	{
+		for (int i = 0; i < 4; i++)
+		{
+			if (cajas[i] != NULL && bordePantalla != NULL)
+			{
 
+				if (cajas[i]->get_rect().getGlobalBounds().intersects(bordePantalla->get_rect(1).getGlobalBounds()))
+				{
+					//si coliciono con el piso, sumo 1 punto.
+					if (cajas[i]->daPuntosN2)
+					{
+						puntajeNivel1++;
+						AdministradorSonido->SumarPunto();
+						cajas[i]->daPuntosN2 = false;
+					}
+				
+				}
+			}
+
+		}
 	}
+		
+	
 }
 void Game::Nivel_2_actualizar()
 {
 	if (Nivel_2)
 	{
-		//nota: agregar todas las detrucciones a un metodo DESTRUIRNIVEL1
+		
 		for (int i = 0; i < 10; i++)
 		{
 			//actualizo el arreglo de ragdols
@@ -313,7 +331,22 @@ void Game::Nivel_2_actualizar()
 			}
 		}
 		
+		heliGiratoria[0]->MovimientoHorizontal();
+		heliGiratoria[1]->MovimientoVertical();
+
+		if (puntajeNivel1 >= 3)
+		{
+			if (!win)
+			{
+				AdministradorSonido->ClearStage();
+			}
+			win = true;
+			gameover = true;
+
+		}
+
 	}
+
 }
 
 void Game::Nivel_2_dibujar()
@@ -354,13 +387,16 @@ void Game::Nivel_2_dibujar()
 			}
 		}
 
-		if (heliGiratoria != NULL)
+		for (int i = 0; i < 2; i++)
 		{
-			heliGiratoria[0]->Dibujar(pWnd);
-		}
-		else
-		{
-			cout << "no se dibuja la helice" << endl;
+			if (heliGiratoria != NULL)
+			{
+				heliGiratoria[i]->Dibujar(pWnd);
+			}
+			else
+			{
+				//cout << "no se dibuja la helice" << endl;
+			}
 		}
 
 		//dibujo el contador
@@ -376,6 +412,16 @@ void Game::Nivel_2_dibujar()
 			pWnd->draw(*Reiniciar);
 			pWnd->draw(*Salir);
 			pWnd->draw(*Perdiste);
+		}
+
+		if (puntajeNivel1 >= 3)
+		{
+			//texto ganaste
+			pWnd->draw(*Ganaste);
+			pWnd->draw(*spr_menu);
+			pWnd->draw(*Reiniciar);
+			pWnd->draw(*Salir);
+
 		}
 		puntero->Dibujar(pWnd);
 	}
@@ -424,12 +470,89 @@ void Game::iniciar_fisica()
 
 	mundo = new b2World(b2Vec2(0,gravedad));
 
-	/*****************************/
+	/*****************************/ 
 }
 
 void Game::ProcessEvent(Event& evt)
 {
-	//escucho los click del mouse
+	//if (gameover) { cout << "game over verdadero" << endl; }
+	//if (!gameover) { cout << "game over falso" << endl; }
+	/***********************************reinicio nivel ***************************************/
+	if (cargador_ragdol_vacio == true || (puntajeNivel1 >= 3 && !cargador_ragdol_vacio))
+	{
+		//si hago click en reiniciar, reseteo el nivel, si hago click en salir, salgo del juego
+		if (puntero->get_sprite().getGlobalBounds().intersects(Reiniciar->getGlobalBounds()))
+		{
+			if (reiniciarSelec)
+			{
+				Reiniciar->setOutlineThickness(5);
+				AdministradorSonido->NavegarMenu();
+				reiniciarSelec = false;
+			}
+			if (mousePresionado && evt.type == Event::MouseButtonReleased && evt.mouseButton.button == Mouse::Left)
+			{
+				if (Nivel_1)
+				{
+					Nivel_1 = false;
+					Nivel_inicio = true;
+					gameover = false;
+					win = false;
+					AdmNiveles->BorrarNivel1(mov_p_forma, plataforma_estatica, *mundo, cajas, bala_Ragdoll, contador_ragdoll, puntajeNivel1);
+
+				}
+
+				if (Nivel_2)
+				{
+					AdmNiveles->BorrarNivel2(plataforma_estatica, *mundo, cajas, cannon, pWnd, heliGiratoria);
+					Nivel_2 = false;
+					Nivel_inicio = true;
+					gameover = false;
+					win = false;
+				}
+
+				//destruyo todos los ragdols y reseteo el array para volver a disparar
+				for (int i = 0; i < 10; i++)
+				{
+					if (bala_Ragdoll[i] != NULL)
+					{
+						bala_Ragdoll[i]->destruir_Ragdoll(); //cambiar nombre
+						bala_Ragdoll[i] = NULL;
+					}
+				}
+
+				//reseteo el cargador de ragdolls
+				contador_ragdoll = 10;
+				puntajeNivel1 = 0;
+				mousePresionado = false;
+				cargador_ragdol_vacio = false;
+			}
+		}
+		else
+		{
+			Reiniciar->setOutlineThickness(0);
+			reiniciarSelec = true;
+		}
+
+		if (puntero->get_sprite().getGlobalBounds().intersects(Salir->getGlobalBounds()))
+		{
+			if (salirSelec)
+			{
+				Salir->setOutlineThickness(5);
+				AdministradorSonido->NavegarMenu();
+				salirSelec = false;
+			}
+			if (Mouse::isButtonPressed(Mouse::Left))
+			{
+				pWnd->close();
+			}
+		}
+		else
+		{
+			Salir->setOutlineThickness(0);
+			salirSelec = true;
+		}
+
+	}
 	//si hago click izquierdo vuelvo verdadera la variable mousePresionado
 	if (evt.type == Event::MouseButtonPressed && evt.mouseButton.button == Mouse::Left)
 	{
@@ -441,7 +564,7 @@ void Game::ProcessEvent(Event& evt)
 	// si hago click en el nivel 1 o 2, disparo un ragdol
 	if (Nivel_1 || Nivel_2)
 	{
-		if (cargador_ragdol_vacio == false && mousePresionado && evt.type == Event::MouseButtonReleased && evt.mouseButton.button == Mouse::Left)
+		if (cargador_ragdol_vacio == false && mousePresionado && evt.type == Event::MouseButtonReleased && evt.mouseButton.button == Mouse::Left && !gameover)
 		{
 			for (int i = 0; i < 10; i++)
 			{
@@ -495,6 +618,7 @@ void Game::ProcessEvent(Event& evt)
 			if (evt.key.code == Keyboard::Escape)
 			{
 				pWnd->close();
+				
 			}
 
 			if (evt.key.code == Keyboard::Num1)
@@ -542,80 +666,7 @@ void Game::ProcessEvent(Event& evt)
 		jugarSelec = true;
 		
 	}
-	/***********************************reinicio nivel ***************************************/
-	if (cargador_ragdol_vacio == true)
-	{
-		//si hago click en reiniciar, reseteo el nivel, si hago click en salir, salgo del juego
-		if (puntero->get_sprite().getGlobalBounds().intersects(Reiniciar->getGlobalBounds()))
-		{
-			if (reiniciarSelec)
-			{
-				Reiniciar->setOutlineThickness(5);
-				AdministradorSonido->NavegarMenu();
-				reiniciarSelec = false;
-			}
-			if (mousePresionado && evt.type == Event::MouseButtonReleased && evt.mouseButton.button == Mouse::Left)
-			{
-				if (Nivel_1)
-				{
-					Nivel_1 = false;
-					Nivel_inicio = true;
-					gameover = false;
-					AdmNiveles->BorrarNivel1(mov_p_forma, plataforma_estatica, *mundo, cajas, bala_Ragdoll, contador_ragdoll, puntajeNivel1);
-					
-				}
-
-				if (Nivel_2)
-				{
-					AdmNiveles->BorrarNivel2(plataforma_estatica, *mundo,cajas,cannon, pWnd, heliGiratoria);
-					Nivel_2 = false;
-					Nivel_inicio = true;
-					gameover = false;
-				}
-
-				//destruyo todos los ragdols y reseteo el array para volver a disparar
-				for (int i = 0; i < 10; i++)
-				{
-					if (bala_Ragdoll[i] != NULL)
-					{
-						bala_Ragdoll[i]->destruir_Ragdoll(); //cambiar nombre
-						bala_Ragdoll[i] = NULL;
-					}
-				}
-
-				//reseteo el cargador de ragdolls
-				contador_ragdoll = 10;
-				puntajeNivel1 = 0;
-				mousePresionado = false;
-				cargador_ragdol_vacio = false;
-			}
-		}
-		else
-		{
-			Reiniciar->setOutlineThickness(0);
-			reiniciarSelec = true;
-		}
-
-		if (puntero->get_sprite().getGlobalBounds().intersects(Salir->getGlobalBounds()))
-		{
-			if (salirSelec)
-			{
-				Salir->setOutlineThickness(5);
-				AdministradorSonido->NavegarMenu();
-				salirSelec = false;
-			}
-			if (Mouse::isButtonPressed(Mouse::Left))
-			{
-				pWnd->close();
-			}
-		}
-		else
-		{
-			Salir->setOutlineThickness(0);
-			salirSelec = true;
-		}
-		
-	}
+	
 
 
 	if (mousePresionado && evt.type == Event::MouseButtonReleased && evt.mouseButton.button == Mouse::Left)
@@ -683,32 +734,38 @@ void Game::inicializar_objetos()
 	font_menu->loadFromFile("recursos/letra.ttf");
 
 	jugar = new Text;
-	inicializarTexto(jugar, 35, Color::Red, Color::White, "Jugar", NULL);
+	inicializarTexto(jugar, 35, Color::Red, Color::White, "Jugar", NULL,0);
 	texto_pos(jugar, 60, 170);
 	
 	Salir = new Text;
-	inicializarTexto(Salir, 35, Color::Red, Color::White, "Salir", NULL);
+	inicializarTexto(Salir, 35, Color::Red, Color::White, "Salir", NULL,0);
 	texto_pos(Salir, 60, 250);
 
 	//texto del cargador de ragdols
 	tx_cargador = new Text;
-	inicializarTexto(tx_cargador, 20, Color::Black, Color::White, "Disparos restantes: ", contador_ragdoll);
+	inicializarTexto(tx_cargador, 20, Color::Black, Color::White, "Disparos restantes: ", contador_ragdoll,5);
 	texto_pos(tx_cargador, 10, 575);
-	tx_cargador->setOutlineThickness(5);
+	
 
 	//texto de objetivo
 	tx_objetivo = new Text;
-	inicializarTexto(tx_objetivo, 20, Color::Yellow, Color::Black, "Objetivos en zona: ", puntajeNivel1);
+	inicializarTexto(tx_objetivo, 20, Color::Yellow, Color::Black, "Objetivos en zona: ", puntajeNivel1,5);
 	texto_pos(tx_objetivo, 300, 575);
-	tx_objetivo->setOutlineThickness(5);
+
 
 	Perdiste = new Text;
-	inicializarTexto(Perdiste, 35, Color::Black, Color::White, "Perdiste!!!",NULL);
-	texto_pos(Perdiste, 300, 300);
+	inicializarTexto(Perdiste, 35, Color::Black, Color::White, "Perdiste!!!",NULL,5);
+	texto_pos(Perdiste, 300, 200);
+
+	Ganaste = new Text;
+	inicializarTexto(Ganaste, 35, Color::Green, Color::White, "Ganaste!!", NULL,5);
+	texto_pos(Ganaste, 300, 200);
 
 	Reiniciar = new Text;
-	inicializarTexto(Reiniciar, 35, Color::Black, Color::White, "Reiniciar", NULL);
+	inicializarTexto(Reiniciar, 35, Color::Black, Color::White, "Reiniciar", NULL,0);
 	texto_pos(Reiniciar,35, 170);
+
+
 
 }
 
@@ -722,7 +779,7 @@ void Game::texto_pos(Text* texto, int x, int y)
 	texto->setScale(camara1->getSize().x / ventana_ancho, camara1->getSize().y / ventana_alto);
 }
 
-void Game::inicializarTexto(Text* texto,int size, Color color, Color color2, string str1, int strVariable)
+void Game::inicializarTexto(Text* texto,int size, Color color, Color color2, string str1, int strVariable, float grosorBorde)
 {
 	//metodo usado para simplificar la aplicacion de texto en pantalla.
 
@@ -738,6 +795,7 @@ void Game::inicializarTexto(Text* texto,int size, Color color, Color color2, str
 		texto->setString(str1);
 	}
 	texto->setOutlineColor(color2);
+	texto->setOutlineThickness(grosorBorde);
 }
 
 void Game::Go() {

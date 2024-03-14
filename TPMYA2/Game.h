@@ -94,7 +94,7 @@ private:
 	Caja* cajas[4];
 
 	//heliceGiratoria
-	Helice* heliGiratoria[1];
+	Helice* heliGiratoria[2];
 	
 
 	//zona de ganar
@@ -106,6 +106,7 @@ private:
 	bool Nivel_2 = false;
 	bool mousePresionado = false;
 	bool gameover = false;
+	bool win = false;
 
 	//cargador de ragdolls
 	bool cargador_ragdol_vacio = false;
@@ -151,5 +152,5 @@ public: Game(int ancho, int alto, string titulo);
 	  float radianes_a_grados(float radianes);
 	  void inicializar_objetos();
 	  void texto_pos(Text* texto, int x, int y);
-	  void inicializarTexto(Text* texto, int size, Color color, Color color2, string str1, int strVariable);
+	  void inicializarTexto(Text* texto, int size, Color color, Color color2, string str1, int strVariable, float grosorBorde);
 };

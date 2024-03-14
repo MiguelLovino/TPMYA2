@@ -35,8 +35,8 @@ Helice::Helice(b2World* mundo, b2Vec2 m)
 
 	b2PolygonShape shape_helice[2];
 
-	shape_helice[0].SetAsBox(0.30, 0.30);
-	shape_helice[1].SetAsBox(0.5, 1.2);
+	shape_helice[0].SetAsBox(0.30f, 0.30f);
+	shape_helice[1].SetAsBox(0.5f, 1.2f);
 
 	//asigno las opciones del fixture
 
@@ -89,9 +89,11 @@ void Helice::Dibujar(RenderWindow* ventana)
 		}
 		else
 		{
-			cout << " no se dibujar la helice" << endl;
+			
+			//<< " no se dibujar la helice" << endl;
 		}
 	}
+
 	Actualizar();
 }
 
@@ -104,11 +106,6 @@ void Helice::Actualizar()
 	b2Vec2 fuerza = fuerzaMagnitude * b2Vec2(cos(angulo), sin(angulo));
 	bod_helice[1]->ApplyForceToCenter({ fuerza }, true);
 
-	bod_helice[0]->SetTransform(b2Vec2 (bod_helice[0]->GetPosition().x + vel, bod_helice[0]->GetPosition().y),0);
-
-	if (bod_helice[0]->GetPosition().x > 58) vel *= -1;
-	if (bod_helice[0]->GetPosition().x < 40) vel *= -1;
-	
 	//cout << bod_helice[0]->GetPosition().x << endl;
 }
 
@@ -120,12 +117,28 @@ void Helice::Destruir()
 		bod_helice[i] = NULL;
 		if (bod_helice[i] == NULL)
 		{
-			cout << "el cuerpo de la helice: " + i << " se destruyo" << endl;
+			//cout << "el cuerpo de la helice: " + i << " se destruyo" << endl;
 		}
 	}
 
 	
 
+}
+
+void Helice::MovimientoHorizontal()
+{
+	bod_helice[0]->SetTransform(b2Vec2(bod_helice[0]->GetPosition().x + vel, bod_helice[0]->GetPosition().y), 0);
+
+	if (bod_helice[0]->GetPosition().x > 58) vel *= -1;
+	if (bod_helice[0]->GetPosition().x < 40) vel *= -1;
+}
+
+void Helice::MovimientoVertical()
+{
+	bod_helice[0]->SetTransform(b2Vec2(bod_helice[0]->GetPosition().x, bod_helice[0]->GetPosition().y + vel), 0);
+
+	if (bod_helice[0]->GetPosition().y > 101) vel *= -1;
+	if (bod_helice[0]->GetPosition().y < 81) vel *= -1;
 }
 
 

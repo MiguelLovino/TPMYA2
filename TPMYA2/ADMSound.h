@@ -22,6 +22,9 @@ private:
 	SoundBuffer bufferIntromenu;
 	Sound soundIntromenu;
 	bool activarIntroMenu = true;
+
+	SoundBuffer bufferClearStage;
+	Sound soundClearStage;
 	
 
 public:
@@ -32,5 +35,6 @@ public:
 	void GameOver();
 	void PlayIntroMenu();
 	void StopIntroMenu();
+	void ClearStage();
 };
 
