@@ -123,6 +123,8 @@ private:
 	Text* Reiniciar;
 	Text* Perdiste;
 	Text* Ganaste;
+	Text* misionLv1;
+	Text* misionLv2;
 
 	Sprite* spr_menu;
 	Texture* txt_menu;
@@ -153,4 +155,5 @@ public: Game(int ancho, int alto, string titulo);
 	  void inicializar_objetos();
 	  void texto_pos(Text* texto, int x, int y);
 	  void inicializarTexto(Text* texto, int size, Color color, Color color2, string str1, int strVariable, float grosorBorde);
+	  void ColicionCaja(FloatRect quad, FloatRect caja, int it);
 };

@@ -27,7 +27,7 @@ private:
 	b2DistanceJointDef def_join_heli;
 
 	Avatar* Av_heleice[2];
-	float vel = 0.1f;
+	float vel = 0.12f;
 
 public:
 	Helice(b2World* mundo, b2Vec2 m);

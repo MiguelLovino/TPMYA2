@@ -31,6 +31,18 @@ ADMSound::ADMSound()
 	//cleastage
 	bufferClearStage.loadFromFile("recursos/Audio/clearStage.wav");
 	soundClearStage.setBuffer(bufferClearStage);
+	
+	//colicion caja
+	bufferColicionCaja.loadFromFile("recursos/Audio/colicionCaja.wav");
+	soundColicionCaja.setBuffer(bufferColicionCaja);
+
+	//sonido ambiente de niveles
+	bufferAmbiente.loadFromFile("recursos/Audio/sonidoAmbiente.wav");
+	soundAmbiente.setBuffer(bufferAmbiente);
+
+	//sonido de victoria de juego
+	bufferVictoria.loadFromFile("recursos/Audio/win.wav");
+	soundVictoria.setBuffer(bufferVictoria);
 
 }
 
@@ -76,4 +88,34 @@ void ADMSound::StopIntroMenu()
 void ADMSound::ClearStage()
 {
 	soundClearStage.play();
+}
+
+void ADMSound::ColicionCaja()
+{
+	soundColicionCaja.play();
+}
+
+void ADMSound::Ambiente()
+{
+	if (!activarSonidoAmbiente)
+	{
+		soundAmbiente.setLoop(true);
+		soundAmbiente.play();
+		activarSonidoAmbiente = true;
+	}
+}
+
+void ADMSound::DesactivarAmbiente()
+{
+	if (activarSonidoAmbiente)
+	{
+		soundAmbiente.setLoop(false);
+		activarSonidoAmbiente = false;
+		soundAmbiente.stop();
+	}
+}
+
+void ADMSound::Victoria()
+{
+	soundVictoria.play();
 }

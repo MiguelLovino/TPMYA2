@@ -16,16 +16,14 @@ void Niveles::CargarNivel1(Plataforma_movible* mov_p_forma[], ZonaGanar* &metaA,
 	plataforma_estatica[2] = new Pared_estatica("recursos/matlib.jpg", &mundo, { 52, 98.59 }, { 3, 1 });
 	plataforma_estatica[3] = new Pared_estatica("recursos/matlib.jpg", &mundo, { 59, 104.1 }, { 3, 1 });
 	//cajas movibles
-	cajas[0] = new Caja("recursos/caja.jpg",&mundo, { 61, 80.80 }, { 0.70, 0.75 });//arriba
-	cajas[1] = new Caja("recursos/caja.jpg", &mundo, { 59, 80.80 }, { 0.70, 0.75 });//arriba
-	cajas[2] = new Caja("recursos/caja.jpg", &mundo, { 51.70, 96.80 }, { 0.70, 0.75 });//medio
-	cajas[3] = new Caja("recursos/caja.jpg", &mundo, { 51, 102.25 }, { 0.70, 0.75 });//abajo
+	cajas[0] = new Caja("recursos/caja.jpg",&mundo, { 61, 80.80 }, { 0.70, 0.70 });//arriba
+	cajas[1] = new Caja("recursos/caja.jpg", &mundo, { 59, 80.80 }, { 0.70, 0.70 });//arriba
+	cajas[2] = new Caja("recursos/caja.jpg", &mundo, { 51.70, 96.80 }, { 0.70, 0.70 });//medio
+	cajas[3] = new Caja("recursos/caja.jpg", &mundo, { 51, 102.25 }, { 0.70, 0.70 });//abajo
 
-	if (true)
-	{
-		*&metaA = new ZonaGanar("recursos/bandera.png", { 63.5,101 });
-		//cout << "se crea el objeto bandera" << endl;
-	}
+	*&metaA = new ZonaGanar("recursos/bandera.png", { 63.5,101 });
+	
+	
 
 
 }
@@ -84,16 +82,16 @@ void Niveles::BorrarNivel1(Plataforma_movible *mov_p_forma[],Pared_estatica* pla
 
 void Niveles::CargarNivel2(Pared_estatica* plataforma_estatica[], b2World& mundo, Caja* cajas[], cannon_Sprite* cannon2, RenderWindow *ventana, Helice *geliGiratoria[])
 {
-	cajas[0] = new Caja("recursos/caja.jpg", &mundo, { 60, 83 }, { 0.70, 0.75 });//derecha
+	cajas[0] = new Caja("recursos/caja.jpg", &mundo, { 60, 83 }, { 0.70, 0.70 });//derecha
 	plataforma_estatica[0] = new Pared_estatica("recursos/matlib.jpg", &mundo, { 60, 84.0 }, { 1,	0.75f });
 
-	cajas[1] = new Caja("recursos/caja.jpg", &mundo, { 50, 86.0 }, { 0.70, 0.75 });//derecha
+	cajas[1] = new Caja("recursos/caja.jpg", &mundo, { 50, 86.0 }, { 0.70, 0.70 });//derecha
 	plataforma_estatica[1] = new Pared_estatica("recursos/matlib.jpg", &mundo, { 50, 87.0 }, { 1, 0.75f});
 
-	cajas[2] = new Caja("recursos/caja.jpg", &mundo, { 44.9, 80.0 }, { 0.70, 0.75 });//izquierda
+	cajas[2] = new Caja("recursos/caja.jpg", &mundo, { 44.9, 80.0 }, { 0.70, 0.70 });//izquierda
 	plataforma_estatica[2] = new Pared_estatica("recursos/matlib.jpg", &mundo, { 44.9, 81.0 }, { 1, 0.75f });
 
-	cajas[3] = new Caja("recursos/caja.jpg", &mundo, { 61.9, 92.0 }, { 0.70, 0.75 });//izquierda
+	cajas[3] = new Caja("recursos/caja.jpg", &mundo, { 61.9, 92.0 }, { 0.70, 0.70 });//izquierda
 	plataforma_estatica[3] = new Pared_estatica("recursos/matlib.jpg", &mundo, { 61.9, 93.0 }, { 1, 0.75f });
 	//creo 2 cajas
 	

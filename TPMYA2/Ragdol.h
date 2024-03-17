@@ -26,7 +26,7 @@ public:
 	b2Body* bod_ragdol[6];
 	b2Fixture* fix_ragdol[6];
 	b2DistanceJoint* joint_ragdolino[5];
-	Ragdol(b2World* mundo, b2Vec2 m, float rot_cannon);
+	Ragdol(b2World* mundo, b2Vec2 m, Vector2f pos_cannon, float rot_canno);
 	~Ragdol();
 	Avatar get_avatar(int i) { return *Ragdolino[i]; }
 	b2Fixture get_fixture(int i) { return *bod_ragdol[i]->GetFixtureList(); }

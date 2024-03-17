@@ -48,6 +48,7 @@ void Game::Nivel_inicial_colisiones()
 	{
 		//activo el sonido del menu
 		AdministradorSonido->PlayIntroMenu();
+		AdministradorSonido->DesactivarAmbiente();
 		
 		
 		// si la mira, choca con el texto salir
@@ -108,9 +109,26 @@ void Game::Nivel_inicial_dibujar()
 
 void Game::Nivel_1_colisiones()
 {
+	
 	if (Nivel_1)
 	{
+
+			FloatRect piso = bordePantalla->get_rect(0).getGlobalBounds();
+			FloatRect techo = bordePantalla->get_rect(1).getGlobalBounds();
+			FloatRect paredI = bordePantalla->get_rect(2).getGlobalBounds();
+			FloatRect paredD = bordePantalla->get_rect(3).getGlobalBounds();
+
+		for (size_t i = 0; i < 4; i++)
+		{
+
+			FloatRect caja = cajas[i]->get_rect().getGlobalBounds();
+
+			ColicionCaja(caja, piso, i);
+			ColicionCaja(caja, techo, i + 4);
+			ColicionCaja(caja, paredD, i + 8);
+			ColicionCaja(caja, paredI, i + 12);
 		
+		}
 
 	}
 	
@@ -119,7 +137,7 @@ void Game::Nivel_1_actualizar()
 {
 	if (Nivel_1)
 	{
-
+		AdministradorSonido->Ambiente();
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -260,7 +278,8 @@ void Game::Nivel_1_dibujar()
 		pWnd->draw(*tx_cargador);
 		//objetivo
 		pWnd->draw(*tx_objetivo);
-
+		pWnd->draw(*misionLv1);
+	
 	}
 
 	if (cargador_ragdol_vacio == true)
@@ -302,6 +321,22 @@ void Game::Nivel_2_colisiones()
 			}
 
 		}
+		//controlo las coliciones para reproducir el sonido
+		FloatRect piso = bordePantalla->get_rect(0).getGlobalBounds();
+		FloatRect techo = bordePantalla->get_rect(1).getGlobalBounds();
+		FloatRect paredI = bordePantalla->get_rect(2).getGlobalBounds();
+		FloatRect paredD = bordePantalla->get_rect(3).getGlobalBounds();
+
+		for (size_t i = 0; i < 4; i++)
+		{
+			FloatRect caja = cajas[i]->get_rect().getGlobalBounds();
+
+			ColicionCaja(caja, piso, i);
+			ColicionCaja(caja, techo, i + 4);
+			ColicionCaja(caja, paredD, i + 8);
+			ColicionCaja(caja, paredI, i + 12);
+		}
+
 	}
 		
 	
@@ -344,6 +379,8 @@ void Game::Nivel_2_actualizar()
 			gameover = true;
 
 		}
+
+
 
 	}
 
@@ -405,6 +442,8 @@ void Game::Nivel_2_dibujar()
 		pWnd->draw(*tx_cargador);
 		//canon
 		cannon->dibujar(pWnd);
+		//mision
+		pWnd->draw(*misionLv2);
 
 		if (cargador_ragdol_vacio == true)
 		{
@@ -585,7 +624,7 @@ void Game::ProcessEvent(Event& evt)
 	
 						//aca debe de ir el resultado final de la operacion
 						
-						bala_Ragdoll[i] = new Ragdol(mundo, {boca_x,boca_y},0);
+						bala_Ragdoll[i] = new Ragdol(mundo, { boca_x,boca_y },  (Vector2f)cannon->get_pos_Nivel1(), cannon->get_sprite().getRotation());
 						bala_Ragdoll[i]->fuerza_disparo( cannon->get_potencia_cannon() * 4, grados_a_radiannes(cannon->get_sprite().getRotation() ));
 					
 						tiempo2 = tiempo1;
@@ -732,40 +771,52 @@ void Game::inicializar_objetos()
 	//Menu pantalla inicial
 	font_menu = new Font;
 	font_menu->loadFromFile("recursos/letra.ttf");
-
+	
+	//boton jugar
 	jugar = new Text;
 	inicializarTexto(jugar, 35, Color::Red, Color::White, "Jugar", NULL,0);
 	texto_pos(jugar, 60, 170);
 	
+	//boton salir
 	Salir = new Text;
 	inicializarTexto(Salir, 35, Color::Red, Color::White, "Salir", NULL,0);
 	texto_pos(Salir, 60, 250);
 
 	//texto del cargador de ragdols
 	tx_cargador = new Text;
-	inicializarTexto(tx_cargador, 20, Color::Black, Color::White, "Disparos restantes: ", contador_ragdoll,5);
-	texto_pos(tx_cargador, 10, 575);
+	inicializarTexto(tx_cargador, 15, Color::Black, Color::White, "Disparos restantes: ", contador_ragdoll,5);
+	texto_pos(tx_cargador, 5, 584);
 	
 
 	//texto de objetivo
 	tx_objetivo = new Text;
-	inicializarTexto(tx_objetivo, 20, Color::Yellow, Color::Black, "Objetivos en zona: ", puntajeNivel1,5);
-	texto_pos(tx_objetivo, 300, 575);
+	inicializarTexto(tx_objetivo, 15, Color::Yellow, Color::Black, "Objetivos en zona: ", puntajeNivel1,5);
+	texto_pos(tx_objetivo, 300, 584);
 
-
+	//texto perdiste
 	Perdiste = new Text;
 	inicializarTexto(Perdiste, 35, Color::Black, Color::White, "Perdiste!!!",NULL,5);
 	texto_pos(Perdiste, 300, 200);
-
+	
+	//texto ganaste
 	Ganaste = new Text;
 	inicializarTexto(Ganaste, 35, Color::Green, Color::White, "Ganaste!!", NULL,5);
 	texto_pos(Ganaste, 300, 200);
 
+	//boton reiniciar
 	Reiniciar = new Text;
 	inicializarTexto(Reiniciar, 35, Color::Black, Color::White, "Reiniciar", NULL,0);
 	texto_pos(Reiniciar,35, 170);
 
-
+	//texto mision 1
+	misionLv1 = new Text;
+	inicializarTexto(misionLv1, 13, Color::Yellow, Color::Black, "Mision:Las cajas deben llegar a la bandera.", NULL, 5);
+	texto_pos(misionLv1, 26, 0);
+	
+	//texto mision 2
+	misionLv2 = new Text;
+	inicializarTexto(misionLv2, 15, Color::Yellow, Color::Black, "Mision:Las cajas deben llegar al suelo", NULL, 5);
+	texto_pos(misionLv2, 26, 0);
 
 }
 
@@ -796,6 +847,26 @@ void Game::inicializarTexto(Text* texto,int size, Color color, Color color2, str
 	}
 	texto->setOutlineColor(color2);
 	texto->setOutlineThickness(grosorBorde);
+}
+
+void Game::ColicionCaja(FloatRect quad, FloatRect caja, int it)
+{
+	for (size_t i = 0; i < 4; i++)
+	{
+		if (caja.intersects(quad))
+		{
+			if (AdministradorSonido->get_ColicionCajaReproduciendo(it) == false)
+			{
+				AdministradorSonido->ColicionCaja();
+				AdministradorSonido->set_ColicionCajaReproduciendo(true, it);
+			}
+		}
+		else
+		{
+			AdministradorSonido->set_ColicionCajaReproduciendo(false, it);
+		}
+	}
+
 }
 
 void Game::Go() {

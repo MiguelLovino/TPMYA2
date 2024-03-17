@@ -1,6 +1,6 @@
 #include "Ragdol.h"
 
-Ragdol::Ragdol(b2World* mundo, b2Vec2 m, float rot_cannon)
+Ragdol::Ragdol(b2World* mundo, b2Vec2 m, Vector2f pos_cannon, float rot_cannon)
 {
 	//la imagen de cada parte del ragdoll
 	for (int i = 0; i < 6; i++)
@@ -29,12 +29,13 @@ Ragdol::Ragdol(b2World* mundo, b2Vec2 m, float rot_cannon)
 	for (int i = 0; i < 6; i++)
 	{
 		//asigno el angulo
-		boddef_ragdol[i].angle = 0.0f;
+		boddef_ragdol[i].angle = 0;
 		//asigno el tipo del cuerpo (dinamico para que se mueva con las fuerzas)
 		boddef_ragdol[i].type = b2_dynamicBody;
 		//le asigno a cada cuerpo, su definicion que va a tener en el mundo.
 		bod_ragdol[i] = mundo->CreateBody(&boddef_ragdol[i]);
 	}
+
 
 	//creo las formas que van a tener las partes del ragdoll
 	b2PolygonShape shape_ragdol[6];
@@ -85,14 +86,16 @@ Ragdol::Ragdol(b2World* mundo, b2Vec2 m, float rot_cannon)
 	}
 
 	
-	//bod_ragdol[2]->SetTransform(bod_ragdol[2]->GetPosition(), rot_cannon);
 
 	//inicializo el ragdoll con su cuerpo(con fixture y definiciones ya implementadas, y su figura a utilizar)
 	for (int i = 0; i < 6; i++)
 	{
 		
-		Ragdolino[i] = new Avatar(bod_ragdol[i], fig_ragdol[i], rot_cannon);
+		Ragdolino[i] = new Avatar(bod_ragdol[i], fig_ragdol[i], 0);
+		Ragdolino[i]->set_rot(rot_cannon);
 	}
+
+	
 }
 
 Ragdol::~Ragdol()

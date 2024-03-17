@@ -45,7 +45,7 @@ Helice::Helice(b2World* mundo, b2Vec2 m)
 		if (i == 0) { def_fix_helice[i].shape = &shape_helice[0]; }
 		if (i == 1) { def_fix_helice[i].shape = &shape_helice[1]; }
 		
-		def_fix_helice[i].density = 0.1f;
+		def_fix_helice[i].density = 0.25f;
 		def_fix_helice[i].friction = 1;
 		def_fix_helice[i].restitution = 0.1f;
 		fix_helice[i] = bod_helice[i]->CreateFixture(&def_fix_helice[i]);
@@ -102,7 +102,7 @@ void Helice::Actualizar()
 	//Movimiento tipo helice
 	float angulo = bod_helice[1]->GetAngle();
 	//aplico fuerza
-	float fuerzaMagnitude = 10.0f;
+	float fuerzaMagnitude = 150.0f;
 	b2Vec2 fuerza = fuerzaMagnitude * b2Vec2(cos(angulo), sin(angulo));
 	bod_helice[1]->ApplyForceToCenter({ fuerza }, true);
 
@@ -129,7 +129,7 @@ void Helice::MovimientoHorizontal()
 {
 	bod_helice[0]->SetTransform(b2Vec2(bod_helice[0]->GetPosition().x + vel, bod_helice[0]->GetPosition().y), 0);
 
-	if (bod_helice[0]->GetPosition().x > 58) vel *= -1;
+	if (bod_helice[0]->GetPosition().x > 51) vel *= -1;
 	if (bod_helice[0]->GetPosition().x < 40) vel *= -1;
 }
 

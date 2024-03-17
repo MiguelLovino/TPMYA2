@@ -23,6 +23,6 @@ public:
 	void set_texture(Texture* teture) { rec_shape->setTexture(teture); }
 	void actualizar_ragdol();
 	void mover(float vel_y);
-	void set_pos_y(float posy) { bod_avatar->SetTransform({ bod_avatar->GetPosition().x, posy }, 0); }
+	void set_rot(float rot) { bod_avatar->SetTransform({ bod_avatar->GetPosition().x, bod_avatar->GetPosition().y }, rot); }
 };
 

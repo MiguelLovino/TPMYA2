@@ -29,5 +29,6 @@ public:
 	void rotar(float grado);
 	void Dibujar(RenderWindow *ventana);
 	void Destruir(b2World* mundo);
+	RectangleShape get_rect() { return *rec_pared; }
 };
 
