@@ -54,7 +54,7 @@ void cannon_Sprite::actualizar(Vector2f mouse_m, RenderWindow* ventana,bool nive
 	{
 		angulo = 0;
 	}
-	//cout << angulo << endl;
+	
 	spr_canon->setRotation(angulo);
 
 	//en cada actualizacion, calculo la potencia de disparo del cannon

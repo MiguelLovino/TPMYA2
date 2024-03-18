@@ -106,7 +106,7 @@ void Helice::Actualizar()
 	b2Vec2 fuerza = fuerzaMagnitude * b2Vec2(cos(angulo), sin(angulo));
 	bod_helice[1]->ApplyForceToCenter({ fuerza }, true);
 
-	//cout << bod_helice[0]->GetPosition().x << endl;
+	
 }
 
 void Helice::Destruir()
@@ -115,10 +115,6 @@ void Helice::Destruir()
 	{
 		bod_helice[i]->GetWorld()->DestroyBody(bod_helice[i]);
 		bod_helice[i] = NULL;
-		if (bod_helice[i] == NULL)
-		{
-			//cout << "el cuerpo de la helice: " + i << " se destruyo" << endl;
-		}
 	}
 
 	

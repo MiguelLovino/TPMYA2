@@ -58,7 +58,7 @@ void Game::Nivel_inicial_colisiones()
 			{
 				//resalta de color blanco el texto
 				Salir->setOutlineThickness(5);
-				//cout << "tiene que poner el texto de color blanco" << endl;
+				
 				AdministradorSonido->NavegarMenu();
 				salirSelec = false;
 			}
@@ -83,15 +83,7 @@ void Game::Nivel_inicial_colisiones()
 }
 void Game::Nivel_inicial_actualizar()
 {
-	//actualizo el estadao del cargador
-	if (cargador_ragdol_vacio <= 0)
-	{
-		//cargador_ragdol_vacio = true;
-	}
-	else
-	{
-		//cargador_ragdol_vacio = false;
-	}
+	
 	tx_objetivo->setString("Cajas en zona: " + to_string(puntajeNivel1));
 }
 void Game::Nivel_inicial_dibujar()
@@ -139,78 +131,77 @@ void Game::Nivel_1_actualizar()
 	{
 		AdministradorSonido->Ambiente();
 
-	for (int i = 0; i < 10; i++)
-	{
-		//actualizo el arreglo de ragdols
-		if (bala_Ragdoll[i] != NULL)
+		for (int i = 0; i < 10; i++)
 		{
-			for (int j = 0; j < 6; j++)
+			//actualizo el arreglo de ragdols
+			if (bala_Ragdoll[i] != NULL)
 			{
-				bala_Ragdoll[i]->get_avatar(j).actualizar_ragdol();
-			}
-		}
-	}
-
-
-	//mejorar
-	if(mov_p_forma[0] != NULL) mov_p_forma[0]->actualizar(102, 80);
-	if (mov_p_forma[1] != NULL) mov_p_forma[1]->actualizar(95, 80);
-	if (mov_p_forma[2] != NULL) mov_p_forma[2]->actualizar(100, 80);
-
-	for (int i = 0; i < 4; i++)
-	{
-		if (cajas[i] != NULL)
-		{
-		  cajas[i]->Actualizar();
-		}
-	}
-	
-	//consulto si alguna de las cajas se encuentran en la meta.
-	for (int i = 0; i < 4; i++)
-	{
-		if (cajas[i] != NULL && metaA != NULL)
-		{
-
-			if (cajas[i]->get_rect().getGlobalBounds().intersects(metaA->get_spr().getGlobalBounds()))
-			{
-
-			int c_pos_X = cajas[i]->get_rect().getPosition().x;
-			int c_pos_Y = cajas[i]->get_rect().getPosition().y;
-
-				if (c_pos_X > 61 && c_pos_X < 65 && c_pos_Y > 93 && c_pos_Y < 106)
+				for (int j = 0; j < 6; j++)
 				{
-					if (cajas[i]->enPosicion == false)
-					{
-						//activo una bandera para saber que esta en el lugar correcto
-						cajas[i]->enPosicion = true;
-						//sumo un punto a la condicion de pasar de nivel
-						puntajeNivel1++;
-						AdministradorSonido->SumarPunto();
-						//cout << " sumo 1 punto " << endl;
-					}
+					bala_Ragdoll[i]->get_avatar(j).actualizar_ragdol();
 				}
-
 			}
 		}
-	}
-	/***************************PASAR DE NIVEL*******************************************/
-	//si almenos 3 cajas se encuentran en la zona de meta, se pasa de pantalla
-	if (puntajeNivel1 >= 3)
-	{	
-		//sonido de pasar nivel.
-		AdministradorSonido->ClearStage();
-		//activo y desactivo las banderas correspondientes.
-		Nivel_1 = false;
-		Nivel_2 = true;
-		
-		//borro los objetos del nivel 1
-		AdmNiveles->BorrarNivel1(mov_p_forma, plataforma_estatica, *mundo, cajas, bala_Ragdoll, contador_ragdoll, puntajeNivel1);
 
-		//creo los objetos del nivel 2
-		AdmNiveles->CargarNivel2(plataforma_estatica, *mundo, cajas, cannon,pWnd,heliGiratoria);
+		//actualiza el moviento de la plataforma y controla los limites (arriba y abajo)
+		if(mov_p_forma[0] != NULL) mov_p_forma[0]->actualizar(102, 80);
+		if (mov_p_forma[1] != NULL) mov_p_forma[1]->actualizar(95, 80);
+		if (mov_p_forma[2] != NULL) mov_p_forma[2]->actualizar(100, 80);
+
+		for (int i = 0; i < 4; i++)
+		{
+			if (cajas[i] != NULL)
+			{
+			  cajas[i]->Actualizar();
+			}
+		}
+	
+		//consulto si alguna de las cajas se encuentran en la meta.
+		for (int i = 0; i < 4; i++)
+		{
+			if (cajas[i] != NULL && metaA != NULL)
+			{
+
+				if (cajas[i]->get_rect().getGlobalBounds().intersects(metaA->get_spr().getGlobalBounds()))
+				{
+
+				int c_pos_X = cajas[i]->get_rect().getPosition().x;
+				int c_pos_Y = cajas[i]->get_rect().getPosition().y;
+
+					if (c_pos_X > 61 && c_pos_X < 65 && c_pos_Y > 93 && c_pos_Y < 106)
+					{
+						if (cajas[i]->enPosicion == false)
+						{
+							//activo una bandera para saber que esta en el lugar correcto
+							cajas[i]->enPosicion = true;
+							//sumo un punto a la condicion de pasar de nivel
+							puntajeNivel1++;
+							AdministradorSonido->SumarPunto();
+					
+						}
+					}
+
+				}
+			}
+		}
+		/***************************PASAR DE NIVEL*******************************************/
+		//si almenos 3 cajas se encuentran en la zona de meta, se pasa de pantalla
+		if (puntajeNivel1 >= 3)
+		{	
+			//sonido de pasar nivel.
+			AdministradorSonido->ClearStage();
+			//activo y desactivo las banderas correspondientes.
+			Nivel_1 = false;
+			Nivel_2 = true;
+		
+			//borro los objetos del nivel 1
+			AdmNiveles->BorrarNivel1(mov_p_forma, plataforma_estatica, *mundo, cajas, bala_Ragdoll, contador_ragdoll, puntajeNivel1);
+
+			//creo los objetos del nivel 2
+			AdmNiveles->CargarNivel2(plataforma_estatica, *mundo, cajas, cannon,pWnd,heliGiratoria);
 		
 		
-	}
+		}
 	}
 }
 
@@ -229,12 +220,9 @@ void Game::Nivel_1_dibujar()
 		if (metaA != NULL)
 		{
 			metaA->Dibujar(pWnd);
-			//cout << "se dibujar la bandera" << endl;
+			
 		}
-		else if (metaA == NULL)
-		{
-			//cout << "el objeto no se crea" << endl;
-		}
+		
 
 		//plataformas movibles
 		for (int i = 0; i < 3; i++)
@@ -272,14 +260,13 @@ void Game::Nivel_1_dibujar()
 			{
 				cajas[i]->Dibujar(pWnd);
 			}
+
 		}
-		
 		//cargador
 		pWnd->draw(*tx_cargador);
 		//objetivo
 		pWnd->draw(*tx_objetivo);
 		pWnd->draw(*misionLv1);
-	
 	}
 
 	if (cargador_ragdol_vacio == true)
@@ -424,26 +411,26 @@ void Game::Nivel_2_dibujar()
 			}
 		}
 
-		for (int i = 0; i < 2; i++)
-		{
-			if (heliGiratoria != NULL)
+			for (int i = 0; i < 2; i++)
 			{
-				heliGiratoria[i]->Dibujar(pWnd);
-			}
-			else
-			{
-				//cout << "no se dibuja la helice" << endl;
-			}
-		}
+				if (heliGiratoria != NULL)
+				{
+					heliGiratoria[i]->Dibujar(pWnd);
+				}
 
-		//dibujo el contador
-		pWnd->draw(*tx_objetivo);
-		//dibujar cargador
-		pWnd->draw(*tx_cargador);
-		//canon
-		cannon->dibujar(pWnd);
-		//mision
-		pWnd->draw(*misionLv2);
+			}
+
+
+			//dibujo el contador
+			pWnd->draw(*tx_objetivo);
+			//dibujar cargador
+			pWnd->draw(*tx_cargador);
+			//canon
+			cannon->dibujar(pWnd);
+			//mision
+			pWnd->draw(*misionLv2);
+
+
 
 		if (cargador_ragdol_vacio == true)
 		{
@@ -465,6 +452,7 @@ void Game::Nivel_2_dibujar()
 		puntero->Dibujar(pWnd);
 	}
 }
+
 
 void Game::DrawGame()
 {
@@ -514,8 +502,7 @@ void Game::iniciar_fisica()
 
 void Game::ProcessEvent(Event& evt)
 {
-	//if (gameover) { cout << "game over verdadero" << endl; }
-	//if (!gameover) { cout << "game over falso" << endl; }
+
 	/***********************************reinicio nivel ***************************************/
 	if (cargador_ragdol_vacio == true || (puntajeNivel1 >= 3 && !cargador_ragdol_vacio))
 	{
@@ -596,7 +583,7 @@ void Game::ProcessEvent(Event& evt)
 	if (evt.type == Event::MouseButtonPressed && evt.mouseButton.button == Mouse::Left)
 	{
 		mousePresionado = true;
-		//cout << "presiono el click izquierdo" << endl;
+		
 	}
 
 
@@ -639,6 +626,7 @@ void Game::ProcessEvent(Event& evt)
 			}
 		}
 		
+		//actualizo la bandera del cargador que despues es tomada en cuenta para el fin del juego.
 		if (cargador_ragdol_vacio == false && mousePresionado && evt.type == Event::MouseButtonReleased && evt.mouseButton.button == Mouse::Left && contador_ragdoll == 0)
 		{
 			cargador_ragdol_vacio = true;
@@ -660,18 +648,20 @@ void Game::ProcessEvent(Event& evt)
 				
 			}
 
+			// teclas para debug.
 			if (evt.key.code == Keyboard::Num1)
 			{
-				puntajeNivel1++;
+				//puntajeNivel1++;
 			}
 			if (evt.key.code == Keyboard::Num2)
 			{
-				cargador_ragdol_vacio = true;
+				//cargador_ragdol_vacio = true;
 			}
 
 	}
 
 	//si hago click en jugar, avanzo a nivel 1, si hago click en salir, salgo del juego
+	
 	//checkeo la colicion de los sprite
 	if (Nivel_inicio && puntero->get_sprite().getGlobalBounds().intersects(jugar->getGlobalBounds()))
 	{
@@ -705,13 +695,13 @@ void Game::ProcessEvent(Event& evt)
 		jugarSelec = true;
 		
 	}
-	
+
 
 
 	if (mousePresionado && evt.type == Event::MouseButtonReleased && evt.mouseButton.button == Mouse::Left)
 	{
 		mousePresionado = false;
-		//cout << "suelto el click izquierdo" << endl;
+		
 	}
 }
 
@@ -753,7 +743,7 @@ void Game::inicializar_objetos()
 
 	// mira
 	puntero = new Mira(camara1, ventana_ancho, ventana_alto);
-	
+
 
 	//menu
 	txt_menu = new Texture;
@@ -896,7 +886,7 @@ void Game::actualizar_cargador_ragdoll()
 	if (contador_ragdoll >= 10)
 	{
 		//cargador_ragdol_vacio = true;
-	}
+}
 
 }
 

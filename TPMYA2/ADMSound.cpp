@@ -55,7 +55,7 @@ void ADMSound::DisparoCanion()
 void ADMSound::NavegarMenu()
 {
 	soundMenu.play();
-	//cout << "hola" << endl;
+	
 }
 
 void ADMSound::SumarPunto()
